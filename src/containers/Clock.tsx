@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react';
 import styled from '@emotion/styled';
-import TimeFormat from './TimeFormat';
+import TimeFormat from 'Components/TimeFormat';
 
 interface ClockProps {
   hour: string,
