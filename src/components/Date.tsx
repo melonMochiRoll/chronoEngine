@@ -44,4 +44,5 @@ const Block = styled.div`
   font-weight: 600;
   gap: 15px;
   text-shadow: 0 0 3px #fff;
+  padding-top: 20px;
 `;
