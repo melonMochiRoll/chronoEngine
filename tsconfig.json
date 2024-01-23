@@ -19,6 +19,7 @@
       "Pages/*": ["src/pages/*"],
       "Routes/*": ["src/routes/*"],
       "Styles/*": ["src/styles/*"],
+      "Utils/*": ["src/utils/*"],
     },
   }
 }
