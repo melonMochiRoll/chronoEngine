@@ -15,7 +15,7 @@ const TimeFormat: FC<TimeFormatProps> = ({
   return (
     <Block>
       <Box>
-        <Display>{hour}</Display>
+        <Display>{hour?.length === 1 ? `0${hour}` : hour}</Display>
         <HMS>HOURS</HMS>
       </Box>
       <Display>:</Display>
