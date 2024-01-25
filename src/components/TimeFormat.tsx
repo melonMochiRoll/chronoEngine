@@ -5,27 +5,29 @@ interface TimeFormatProps {
   hour: string,
   minute: string,
   second: string,
+  onClick?: () => void,
 };
 
 const TimeFormat: FC<TimeFormatProps> = ({
   hour,
   minute,
   second,
+  onClick,
 }) => {
   return (
-    <Block>
+    <Block onClick={() => onClick && onClick()}>
       <Box>
         <Display>{hour?.length === 1 ? `0${hour}` : hour}</Display>
         <HMS>HOURS</HMS>
       </Box>
       <Display>:</Display>
       <Box>
-        <Display>{minute}</Display>
+        <Display>{minute?.length === 1 ? `0${minute}` : minute}</Display>
         <HMS>MINUTES</HMS>
       </Box>
       <Display>:</Display>
       <Box>
-        <Display>{second}</Display>
+        <Display>{second?.length === 1 ? `0${second}` : second}</Display>
         <HMS>SECONDS</HMS>
       </Box>
     </Block>
