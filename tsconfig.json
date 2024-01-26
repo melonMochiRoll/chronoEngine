@@ -16,6 +16,8 @@
     "paths": {
       "Components/*": ["src/components/*"],
       "Containers/*": ["src/containers/*"],
+      "Features/*": ["src/features/*"],
+      "Hooks/*": ["src/hooks/*"],
       "Pages/*": ["src/pages/*"],
       "Routes/*": ["src/routes/*"],
       "Styles/*": ["src/styles/*"],
