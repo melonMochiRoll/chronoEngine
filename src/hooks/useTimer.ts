@@ -1,6 +1,18 @@
 import { useCallback, useState } from "react";
 
-const useTimer: any = (initData: any) => {
+export interface HMS {
+  hour: number | string,
+  minute: number | string,
+  second: number | string,
+};
+
+type useTimerReturnType = [
+  HMS,
+  (e: any) => void,
+  React.Dispatch<any>,
+];
+
+const useTimer = (initData: HMS): useTimerReturnType => {
   const [ value, setValue ] = useState(initData);
 
   const onChange = useCallback((e: any) => {
