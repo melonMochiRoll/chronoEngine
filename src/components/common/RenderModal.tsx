@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import AlertModal from 'Components/modal/AlertModal';
 import TimerModal from 'Components/modal/TimerModal';
 import { useAppSelector } from 'Hooks/reduxHooks';
+import CycleTimerModal from 'Components/modal/CycleTimerModal';
 
 export const ModalName = {
   AlertModal: 'AlertModal',
   TimerModal: 'TimerModal',
+  CycleTimerModal: 'CycleTimerModal',
 };
 
 interface ModalsType {
@@ -16,6 +18,7 @@ interface ModalsType {
 const Modals: ModalsType = {
   [ModalName.AlertModal]: <AlertModal />,
   [ModalName.TimerModal]: <TimerModal />,
+  [ModalName.CycleTimerModal]: <CycleTimerModal />
 };
 
 const RenderModal: FC = () => {
