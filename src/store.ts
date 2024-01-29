@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import modalReducer from 'Features/modalSlice';
 import timerReducer from 'Features/timerSlice';
+import cycleTimerReducer from "Features/cycleTimerSlice";
 
 const reduxStore = configureStore({
   reducer: {
     modal: modalReducer,
     timer: timerReducer,
+    cycleTimer: cycleTimerReducer,
   },
 });
 
