@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import TimeFormat from 'Components/TimeFormat';
 import { getCookie, setCookie } from 'Utils/cookie';
