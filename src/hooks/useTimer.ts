@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
 
 export interface HMS {
-  hour: number | string,
-  minute: number | string,
-  second: number | string,
+  hour: number | string;
+  minute: number | string;
+  second: number | string;
 };
 
 type useTimerReturnType = [
