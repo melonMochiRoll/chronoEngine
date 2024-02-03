@@ -36,7 +36,7 @@ export const getRecords = () => {
       .keys(localStorage)
       .filter((it: string) => it.startsWith(RECORD_STARTSWITH))
       .reduce((acc: IRecord[], key: string) => {
-        const value = JSON.parse(localStorage.getItem(key) as string);
+        const value = JSON.parse(getItem(key) as string);
         acc.push(value);
         return acc;
       }, [])
