@@ -40,7 +40,6 @@ export const getRecords = () => {
         new Date(a.recordTime).valueOf() - new Date(b.recordTime).valueOf()
       );
 
-  console.log(records);
   return records;
 };
 
