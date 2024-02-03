@@ -35,15 +35,12 @@ export const getRecords = () => {
     Object
       .keys(localStorage)
       .filter((it: string) => it.startsWith(RECORD_STARTSWITH))
-      .reduce((acc: IRecord[], key: string) => {
-        const value = JSON.parse(getItem(key) as string);
-        acc.push(value);
-        return acc;
-      }, [])
+      .map((key: string) => getItem(key))
       .sort((a: IRecord, b: IRecord) =>
-        a.recordTime.valueOf() - b.recordTime.valueOf()
+        new Date(a.recordTime).valueOf() - new Date(b.recordTime).valueOf()
       );
 
+  console.log(records);
   return records;
 };
 
