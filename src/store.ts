@@ -3,6 +3,7 @@ import modalReducer from 'Features/modalSlice';
 import timerReducer from 'Features/timerSlice';
 import cycleTimerReducer from "Features/cycleTimerSlice";
 import modeReducer from "Features/modeSlice";
+import recordReducer from "Features/recordSlice";
 
 const reduxStore = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const reduxStore = configureStore({
     modal: modalReducer,
     timer: timerReducer,
     cycleTimer: cycleTimerReducer,
+    record: recordReducer,
   },
 });
 
