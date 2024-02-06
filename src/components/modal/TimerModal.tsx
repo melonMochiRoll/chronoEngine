@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { initTime } from 'Features/timerSlice';
 import { closeModal } from 'Features/modalSlice';
 import { toHMS } from 'Utils/time';
+import InputClock from 'Components/InputClock';
 
 const TimerModal: FC = () => {
   const dispatch = useAppDispatch();
@@ -13,7 +14,7 @@ const TimerModal: FC = () => {
     toHMS(timer.currentTime) : {
     hour: '',
     minute: '',
-    second: '', 
+    second: '',
   });
   
   const onSubmit = () => {
@@ -25,35 +26,11 @@ const TimerModal: FC = () => {
 
   return (
     <Block>
-      <Top>
-        <Input
-          type='number'
-          name='hour'
-          value={value.hour}
-          onChange={onChange}
-          min={0}
-          max={99}
-          placeholder='00' />
-        <span>:</span>
-        <Input
-          type='number'
-          name='minute'
-          value={value.minute}
-          onChange={onChange}
-          min={0}
-          max={59}
-          placeholder='00' />
-        <span>:</span>
-        <Input
-          type='number'
-          name='second'
-          value={value.second}
-          onChange={onChange}
-          min={0}
-          max={59}
-          placeholder='00' />
-      </Top>
-      <Bottom>
+      <InputClock
+        title='타이머 설정'
+        value={value}
+        onChange={onChange} />
+      <ButtonBox>
         <Button
           onClick={() => onSubmit()}>
           확인
@@ -62,7 +39,7 @@ const TimerModal: FC = () => {
           onClick={() => dispatch(closeModal())}>
           취소
         </Button>
-      </Bottom>
+      </ButtonBox>
     </Block>
   );
 };
@@ -76,32 +53,11 @@ const Block = styled.div`
   gap: 50px;
 `;
 
-const Top = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0);
-  gap: 20px;
-
-  span {
-    color: #fff;
-    font-size: 48px;
-    font-weight: 800;
-    text-shadow: 0 0 6px #fff;
-  }
-`;
-
-const Bottom = styled.div`
+const ButtonBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 30px;
-`;
-
-const Input = styled.input`
-  width: 100px;
-  font-size: 64px;
-  text-align: center;
 `;
 
 const Button = styled.button`
