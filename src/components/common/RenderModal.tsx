@@ -4,11 +4,15 @@ import AlertModal from 'Components/modal/AlertModal';
 import TimerModal from 'Components/modal/TimerModal';
 import { useAppSelector } from 'Hooks/reduxHooks';
 import CycleTimerModal from 'Components/modal/CycleTimerModal';
+import TimerModeChanger from 'Components/modal/TimerModeChanger';
+import RecordModal from 'Components/modal/RecordModal';
 
 export const ModalName = {
   AlertModal: 'AlertModal',
   TimerModal: 'TimerModal',
   CycleTimerModal: 'CycleTimerModal',
+  TimerModeChanger: 'TimerModeChanger',
+  RecordModal: 'RecordModal',
 };
 
 interface ModalsType {
@@ -18,7 +22,9 @@ interface ModalsType {
 const Modals: ModalsType = {
   [ModalName.AlertModal]: <AlertModal />,
   [ModalName.TimerModal]: <TimerModal />,
-  [ModalName.CycleTimerModal]: <CycleTimerModal />
+  [ModalName.CycleTimerModal]: <CycleTimerModal />,
+  [ModalName.TimerModeChanger]: <TimerModeChanger />,
+  [ModalName.RecordModal]: <RecordModal />
 };
 
 const RenderModal: FC = () => {
