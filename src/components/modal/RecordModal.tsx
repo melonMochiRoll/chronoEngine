@@ -5,6 +5,7 @@ import { closeModal } from 'Features/modalSlice';
 import { IRecord, RECORD_TIME_FORMAT, clearState } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { clearStorage } from 'Utils/localStorage';
+import { clearCycleCount } from 'Features/cycleTimerSlice';
 
 interface IProcessedRecord {
   cycle: number;
@@ -30,9 +31,13 @@ const RecordModal: FC = () => {
     setMappedRecord(getDayjsFormat(records));
   }, [records]);
 
-  const clear = () => {
+  const clearRecord = () => {
     dispatch(clearState());
     clearStorage();
+  };
+
+  const clearCycle = () => {
+    dispatch(clearCycleCount());
   };
 
   const onClose = () => {
@@ -61,8 +66,12 @@ const RecordModal: FC = () => {
       </RecordsBox>
       <ButtonBox>
         <Button
-          onClick={clear}>
-          초기화
+          onClick={clearRecord}>
+          기록 초기화
+        </Button>
+        <Button
+          onClick={clearCycle}>
+          사이클 횟수 초기화
         </Button>
         <Button
           onClick={onClose}>
