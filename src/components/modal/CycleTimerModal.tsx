@@ -68,11 +68,11 @@ const CycleTimerModal: FC = () => {
         onChange={onChangeNthRestTime} />
       <ButtonBox>
         <Button
-          onClick={() => onSubmit()}>
+          onClick={onSubmit}>
           확인
         </Button>
         <Button
-          onClick={() => onClose()}>
+          onClick={onClose}>
           취소
         </Button>
       </ButtonBox>
