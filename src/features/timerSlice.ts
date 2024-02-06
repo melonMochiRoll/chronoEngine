@@ -14,8 +14,11 @@ export const timerSlice = createSlice({
     setTime: (state, action) => {
       state.currentTime = action.payload.time;
     },
+    resetTime: (state) => {
+      state.currentTime = state.originTime;
+    },
   },
 });
 
-export const { initTime, setTime } = timerSlice.actions;
+export const { initTime, setTime, resetTime } = timerSlice.actions;
 export default timerSlice.reducer;
