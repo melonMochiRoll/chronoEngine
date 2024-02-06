@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { closeModal } from 'Features/modalSlice';
@@ -6,9 +6,29 @@ import { IRecord, RECORD_TIME_FORMAT, clearState } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { clearStorage } from 'Utils/localStorage';
 
+interface IProcessedRecord {
+  cycle: number;
+  mode: string;
+  recordTime: string;
+};
+
+const getDayjsFormat = (records: IRecord[]) => 
+  records.map((item: IRecord) => {
+    return {
+      cycle: item.cycle,
+      mode: item.mode,
+      recordTime: dayjs(item.recordTime).format(RECORD_TIME_FORMAT),
+    };
+  });
+
 const RecordModal: FC = () => {
   const dispatch = useAppDispatch();
   const { records } = useAppSelector(state => state.record);
+  const [ mappedRecord, setMappedRecord ] = useState(getDayjsFormat(records));
+
+  useEffect(() => {
+    setMappedRecord(getDayjsFormat(records));
+  }, [records]);
 
   const clear = () => {
     dispatch(clearState());
@@ -28,12 +48,12 @@ const RecordModal: FC = () => {
           <span>Completion time</span>
         </Head>
         <Scroll>
-          {records.map((item: IRecord, idx: number) => 
+          {mappedRecord.map((item: IProcessedRecord, idx: number) => 
             (
               <Row key={idx}>
                 <span>{item.cycle}</span>
                 <span>{item.mode}</span>
-                <span>{dayjs(item.recordTime).format(RECORD_TIME_FORMAT)}</span>
+                <span>{item.recordTime}</span>
               </Row>
             )
           )}
