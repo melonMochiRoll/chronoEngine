@@ -15,7 +15,7 @@ const InputClock: FC<InputClockProps> = ({
 }) => {
   return (
     <Block>
-      <Title>{title}</Title>
+      {title && <Title>{title}</Title>}
       <InputBox>
         <Input
           type='number'
