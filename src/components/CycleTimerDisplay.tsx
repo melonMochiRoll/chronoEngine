@@ -6,11 +6,13 @@ import { SxProps } from '@mui/material';
 interface CycleTimerDisplayProps {
   cycleCount: number;
   isWorkTime: boolean;
+  onClick: () => void;
 };
 
 const CycleTimerDisplay: FC<CycleTimerDisplayProps> = ({
   cycleCount,
   isWorkTime,
+  onClick,
 }) => {
   return (
     <>
@@ -19,7 +21,7 @@ const CycleTimerDisplay: FC<CycleTimerDisplayProps> = ({
         <Mode>Work</Mode> :
         <Mode>Rest</Mode>
       }
-      <Cycle>
+      <Cycle onClick={onClick}>
         <FireIcon sx={FireIconStyle(isWorkTime)} />
         <CycleCount>{cycleCount}</CycleCount>
       </Cycle>
