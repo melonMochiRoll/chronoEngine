@@ -10,25 +10,31 @@ import { clearCycleCount } from 'Features/cycleTimerSlice';
 interface IProcessedRecord {
   cycle: number;
   mode: string;
-  recordTime: string;
+  elapsedTime: string;
+  completionTime: string;
 };
 
-const getDayjsFormat = (records: IRecord[]) => 
+const getDisplayFormat = (records: IRecord[]) => 
   records.map((item: IRecord) => {
+    const hour = item.elapsedTime.hour ? `${item.elapsedTime.hour}시` : '';
+    const minute = item.elapsedTime.minute ? `${item.elapsedTime.minute}분` : '';
+    const second = item.elapsedTime.second ? `${item.elapsedTime.second}초` : '';
+
     return {
       cycle: item.cycle,
       mode: item.mode,
-      recordTime: dayjs(item.recordTime).format(RECORD_TIME_FORMAT),
+      elapsedTime: `${hour} ${minute} ${second}`,
+      completionTime: dayjs(item.completionTime).format(RECORD_TIME_FORMAT),
     };
   });
 
 const RecordModal: FC = () => {
   const dispatch = useAppDispatch();
   const { records } = useAppSelector(state => state.record);
-  const [ mappedRecord, setMappedRecord ] = useState(getDayjsFormat(records));
+  const [ mappedRecord, setMappedRecord ] = useState(getDisplayFormat(records));
 
   useEffect(() => {
-    setMappedRecord(getDayjsFormat(records));
+    setMappedRecord(getDisplayFormat(records));
   }, [records]);
 
   const clearRecord = () => {
@@ -50,6 +56,7 @@ const RecordModal: FC = () => {
         <Head>
           <span>Cycle</span>
           <span>Mode</span>
+          <span>Elapsed Time</span>
           <span>Completion time</span>
         </Head>
         <Scroll>
@@ -58,7 +65,8 @@ const RecordModal: FC = () => {
               <Row key={idx}>
                 <span>{item.cycle}</span>
                 <span>{item.mode}</span>
-                <span>{item.recordTime}</span>
+                <span>{item.elapsedTime}</span>
+                <span>{item.completionTime}</span>
               </Row>
             )
           )}
@@ -95,7 +103,7 @@ const Block = styled.div`
 const RecordsBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: 800px;
   color: #fff;
 `;
 
@@ -108,8 +116,20 @@ const Head = styled.div`
   border-bottom: 1px solid #fff;
   padding-bottom: 10px;
 
-  span {
-    min-width: 150px;
+  span:nth-of-type(1) {
+    min-width: 130px;
+  }
+
+  span:nth-of-type(2) {
+    min-width: 130px;
+  }
+
+  span:nth-of-type(3) {
+    min-width: 200px;
+  }
+
+  span:nth-of-type(4) {
+    min-width: 200px;
   }
 `;
 
@@ -121,8 +141,20 @@ const Row = styled.div`
   margin-bottom: 10px;
   text-align: center;
 
-  span {
-    min-width: 150px;
+  span:nth-of-type(1) {
+    min-width: 130px;
+  }
+
+  span:nth-of-type(2) {
+    min-width: 130px;
+  }
+
+  span:nth-of-type(3) {
+    min-width: 210px;
+  }
+
+  span:nth-of-type(4) {
+    min-width: 200px;
   }
 `;
 

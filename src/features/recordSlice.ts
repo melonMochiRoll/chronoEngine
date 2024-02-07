@@ -4,10 +4,17 @@ import { getRecords, setRecord } from "Utils/localStorage";
 export const RECORD_STARTSWITH = 'CE_record_';
 export const RECORD_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
+export interface IHms {
+  hour: number,
+  minute: number,
+  second: number,
+};
+
 export interface IRecord {
   cycle: number;
   mode: string;
-  recordTime: Date;
+  elapsedTime: IHms;
+  completionTime: Date;
 };
 
 const initialState: IRecord[] = [];
