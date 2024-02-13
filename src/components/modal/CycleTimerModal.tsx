@@ -10,33 +10,33 @@ import useInput from 'Hooks/useInput';
 
 const CycleTimerModal: FC = () => {
   const dispatch = useAppDispatch();
-  const cycleTimer = useAppSelector(state => state.cycleTimer);
-  const [ workTime, onChangeWorkTime ] = useTimer(cycleTimer.workTime ?
-    toHMS(cycleTimer.workTime) : {
+  const { originTime } = useAppSelector(state => state.cycleTimer);
+  const [ workTime, onChangeWorkTime ] = useTimer(originTime.work.origin ?
+    toHMS(originTime.work.origin) : {
     hour: '',
     minute: '',
     second: '',
   });
-  const [ restTime, onChangeRestTime ] = useTimer(cycleTimer.restTime ?
-    toHMS(cycleTimer.restTime) : {
+  const [ restTime, onChangeRestTime ] = useTimer(originTime.rest.origin ?
+    toHMS(originTime.rest.origin) : {
     hour: '',
     minute: '',
     second: '',
   });
-  const [ nthRestTime, onChangeNthRestTime ] = useTimer(cycleTimer.nthRestTime ?
-    toHMS(cycleTimer.nthRestTime) : {
+  const [ nthRestTime, onChangeNthRestTime ] = useTimer(originTime.nthRest.origin ?
+    toHMS(originTime.nthRest.origin) : {
     hour: '',
     minute: '',
     second: '',
   });
-  const [ nthRest, onChangeNthRest ] = useInput(0);
+  const [ nthRestInterval, onChangeNthRestInterval ] = useInput(0);
   
   const onSubmit = () => {
     dispatch(initCycle({
       workTime: Number(workTime.hour) * 3600 + Number(workTime.minute) * 60 + Number(workTime.second),
       restTime: Number(restTime.hour) * 3600 + Number(restTime.minute) * 60 + Number(restTime.second),
       nthRestTime: Number(nthRestTime.hour) * 3600 + Number(nthRestTime.minute) * 60 + Number(nthRestTime.second),
-      nthRest: nthRest,
+      nthRestInterval: nthRestInterval,
     }));
     dispatch(closeModal());
   };
@@ -58,12 +58,12 @@ const CycleTimerModal: FC = () => {
       <InputBox>
         <Input
           type='text'
-          value={nthRest}
-          onChange={onChangeNthRest} />
-        <Label>{` : n번째 사이클 설정`}</Label>
+          value={nthRestInterval}
+          onChange={onChangeNthRestInterval} />
+        <Label>{`번째 쉬는시간 설정`}</Label>
       </InputBox>
       <InputClock
-        title='n번째 쉬는시간 설정'
+        title=''
         value={nthRestTime}
         onChange={onChangeNthRestTime} />
       <ButtonBox>
