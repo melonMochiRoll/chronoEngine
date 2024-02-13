@@ -38,7 +38,7 @@ const Background: SxProps = {
 
 const Progress: SxProps = {
   position: 'absolute',
-  color: '#20caff',
+  color: '#98fb98',
 
   'circle': {
     strokeWidth: '1.25',
