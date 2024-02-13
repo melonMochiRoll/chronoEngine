@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export const modalSlice = createSlice({
   name: 'modal',
@@ -6,7 +6,7 @@ export const modalSlice = createSlice({
     code: -1,
   },
   reducers: {
-    openModal: (state, action) => {
+    openModal: (state, action: PayloadAction<{ code: number }>) => {
       state.code = action.payload.code;
     },
     closeModal: (state) => {

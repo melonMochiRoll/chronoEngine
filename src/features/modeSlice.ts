@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export const ModeName = {
   Timer: 'Timer',
@@ -11,7 +11,7 @@ export const modeSlice = createSlice({
     mode: ModeName.CycleTimer,
   },
   reducers: {
-    setMode: (state, actions) => {
+    setMode: (state, actions: PayloadAction<{ mode: string }>) => {
       state.mode = actions.payload.mode;
     },
   },

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export const isNthCount = (number: number, n: number) => {
   if (!n) {
@@ -60,11 +60,18 @@ const initialState: ICycleTimerInitState = {
   cycleCount: 1,
 };
 
+type TInitCyclePayload = {
+  workTime: number,
+  restTime: number,
+  nthRestTime: number,
+  nthRestInterval: number,
+};
+
 export const cycleTimerSlice = createSlice({
   name: 'cycleTimer',
   initialState: initialState,
   reducers: {
-    initCycle: (state, action) => {
+    initCycle: (state, action: PayloadAction<TInitCyclePayload>) => {
       const {
         workTime,
         restTime,
@@ -82,7 +89,7 @@ export const cycleTimerSlice = createSlice({
       state.currentTime = { ...newOriginTime.work };
       state.nthRestInterval = nthRestInterval;
     },
-    setTime: (state, action) => {
+    setTime: (state, action: PayloadAction<{ current: number }>) => {
       state.currentTime = {
         ...state.currentTime,
         current: action.payload.current,
