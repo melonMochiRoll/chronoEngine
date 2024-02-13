@@ -15,7 +15,7 @@ const TimeFormat: FC<TimeFormatProps> = ({
   onClick,
 }) => {
   return (
-    <Block onClick={() => onClick && onClick()}>
+    <Block onClick={onClick}>
       <Box>
         <Display>{hour?.length === 1 ? `0${hour}` : hour}</Display>
         <HMS>HOURS</HMS>
