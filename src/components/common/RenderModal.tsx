@@ -7,33 +7,33 @@ import CycleTimerModal from 'Components/modal/CycleTimerModal';
 import TimerModeChanger from 'Components/modal/TimerModeChanger';
 import RecordModal from 'Components/modal/RecordModal';
 
-export const ModalName = {
-  AlertModal: 'AlertModal',
-  TimerModal: 'TimerModal',
-  CycleTimerModal: 'CycleTimerModal',
-  TimerModeChanger: 'TimerModeChanger',
-  RecordModal: 'RecordModal',
+export const enum ModalCode {
+  AlertModal,
+  TimerModal,
+  CycleTimerModal,
+  TimerModeChanger,
+  RecordModal,
 };
 
 interface ModalsType {
-  [key: string]: React.ReactNode;
+  [key: number]: React.ReactNode;
 };
 
 const Modals: ModalsType = {
-  [ModalName.AlertModal]: <AlertModal />,
-  [ModalName.TimerModal]: <TimerModal />,
-  [ModalName.CycleTimerModal]: <CycleTimerModal />,
-  [ModalName.TimerModeChanger]: <TimerModeChanger />,
-  [ModalName.RecordModal]: <RecordModal />
+  [ModalCode.AlertModal]: <AlertModal />,
+  [ModalCode.TimerModal]: <TimerModal />,
+  [ModalCode.CycleTimerModal]: <CycleTimerModal />,
+  [ModalCode.TimerModeChanger]: <TimerModeChanger />,
+  [ModalCode.RecordModal]: <RecordModal />
 };
 
 const RenderModal: FC = () => {
-  const { name } = useAppSelector(state => state.modal);
-  if (!name) return;
+  const { code } = useAppSelector(state => state.modal);
+  if (code < 0) return;
 
   const render = () => {
-    if (Modals.hasOwnProperty(name)) {
-      return Modals[name];
+    if (Modals.hasOwnProperty(code)) {
+      return Modals[code];
     }
   };
 
