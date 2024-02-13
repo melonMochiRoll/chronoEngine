@@ -1,29 +1,39 @@
 import React, { FC, useState } from 'react';
 import CycleTimerContainer from 'Containers/CycleTimerContainer';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
-import { getNextTime, setTime } from 'Features/cycleTimerSlice';
+import { getNextTime, getProgress, setTime } from 'Features/cycleTimerSlice';
 import { openModal } from 'Features/modalSlice';
-import { ModalName } from 'Components/common/RenderModal';
+import { ModalCode } from 'Components/common/RenderModal';
+import { saveRecord } from 'Features/recordSlice';
+import dayjs from 'dayjs';
+import { toHMS } from 'Utils/time';
 
 const CycleTimerContoller: FC = () => {
   const dispatch = useAppDispatch();
   const cycleTimer = useAppSelector(state => state.cycleTimer);
   const [ timeout, setTimeout ] = useState<NodeJS.Timeout | null>(null);
   const [ running, setRunning ] = useState(false);
+  const progress = getProgress(cycleTimer);
 
   const startTimer = () => {
-    let currentTime = cycleTimer.currentTime;
+    let currentTime = cycleTimer.currentTime.current;
 
     const timeout = setInterval(() => {
       if (currentTime > 0) {
         dispatch(setTime({
-          time: --currentTime,
+          current: --currentTime,
         }));
       } 
       
       if (currentTime < 1) {
         dispatch(openModal({
-          name: ModalName.AlertModal,
+          code: ModalCode.AlertModal,
+        }));
+        dispatch(saveRecord({
+          cycle: cycleTimer.cycleCount,
+          mode: `${cycleTimer.currentTime.mode}`,
+          elapsedTime: toHMS(cycleTimer.currentTime.origin),
+          completionTime: dayjs().toDate(),
         }));
         dispatch(getNextTime());
         setRunning(false);
@@ -47,8 +57,10 @@ const CycleTimerContoller: FC = () => {
   return (
     <>
       <CycleTimerContainer
-        cycleTimer={cycleTimer}
+        currentTime={cycleTimer.currentTime}
+        cycleCount={cycleTimer.cycleCount}
         running={running}
+        progress={progress}
         onSubmit={onSubmit} />
     </>
   );
