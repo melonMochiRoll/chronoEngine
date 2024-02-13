@@ -11,109 +11,111 @@ export const getProgress = (cycleTimer: ICycleTimerInitState) => {
   const {
     originTime,
     currentTime,
-    workTime,
-    restTime,
-    nthRestTime,
-    nthRest,
-    cycleCount,
   } = cycleTimer;
 
-  const isWorkTime = originTime.length;
-
-  if (isWorkTime) {
-    return 100 - Math.floor(currentTime / workTime * 100);
+  if (currentTime.mode === OriginTimeMode.Work) {
+    return 100 - Math.floor(currentTime.current / originTime.work.origin * 100);
   } 
 
-  if (isNthCount(cycleCount, nthRest)) {
-    return 100 - Math.floor(currentTime / nthRestTime * 100);
+  if (currentTime.mode === OriginTimeMode.NthRest) {
+    return 100 - Math.floor(currentTime.current / originTime.nthRest.origin * 100);
   }
 
-  return 100 - Math.floor(currentTime / restTime * 100);
+  return 100 - Math.floor(currentTime.current / originTime.rest.origin * 100);
+};
+
+export const enum OriginTimeMode {
+  Work = 'Work',
+  Rest = 'Rest',
+  NthRest = 'NthRest',
+};
+
+export interface ITimeFormat {
+  mode: OriginTimeMode,
+  origin: number,
+  current: number,
+};
+
+export interface IOriginTime {
+  work: { mode: OriginTimeMode.Work, origin: number, current: number },
+  rest: { mode: OriginTimeMode.Rest, origin: number, current: number },
+  nthRest: { mode: OriginTimeMode.NthRest, origin: number, current: number },
 };
 
 export interface ICycleTimerInitState {
-  originTime: number[];
-  workTime: number;
-  restTime: number;
-  currentTime: number;
-  nthRestTime: number;
-  nthRest: number;
+  originTime: IOriginTime;
+  currentTime: ITimeFormat;
+  nthRestInterval: number;
   cycleCount: number;
-}
+};
+
+const initialState: ICycleTimerInitState = {
+  originTime: {
+    work: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
+    rest: { mode: OriginTimeMode.Rest, origin: 0, current: 0 },
+    nthRest: { mode: OriginTimeMode.NthRest, origin: 0, current: 0 },
+  },
+  currentTime: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
+  nthRestInterval: 0,
+  cycleCount: 1,
+};
 
 export const cycleTimerSlice = createSlice({
   name: 'cycleTimer',
-  initialState: {
-    originTime: [0, 0],
-    workTime: 0,
-    restTime: 0,
-    currentTime: 0,
-    nthRestTime: 0,
-    nthRest: 0,
-    cycleCount: 1,
-  },
+  initialState: initialState,
   reducers: {
     initCycle: (state, action) => {
       const {
         workTime,
         restTime,
-        nthRest,
-        nthRestTime
+        nthRestTime,
+        nthRestInterval,
       } = action.payload;
 
-      state.originTime = [ restTime ];
-      state.workTime = workTime;
-      state.restTime = restTime;
-      state.currentTime = workTime;
-      state.nthRestTime = nthRestTime;
-      state.nthRest = nthRest;
+      const newOriginTime: IOriginTime = {
+        work: { mode: OriginTimeMode.Work, origin: workTime, current: workTime },
+        rest: { mode: OriginTimeMode.Rest, origin: restTime, current: restTime },
+        nthRest: { mode: OriginTimeMode.NthRest, origin: nthRestTime, current: nthRestTime },
+      };
+      
+      state.originTime = newOriginTime;
+      state.currentTime = { ...newOriginTime.work };
+      state.nthRestInterval = nthRestInterval;
     },
     setTime: (state, action) => {
-      state.currentTime = action.payload.time;
+      state.currentTime = {
+        ...state.currentTime,
+        current: action.payload.current,
+      };
     },
     getNextTime: (state) => {
       const {
         originTime,
-        workTime,
-        restTime,
-        nthRest,
-        nthRestTime,
+        currentTime,
+        nthRestInterval,
         cycleCount,
       } = state;
-      
-      if (originTime.length < 1) {
-        state.originTime = [
-          isNthCount(cycleCount + 1, nthRest) ? nthRestTime : restTime,
-        ];
+
+      if (
+        currentTime.mode === OriginTimeMode.Rest ||
+        currentTime.mode === OriginTimeMode.NthRest
+        ) {
+        state.currentTime = { ...originTime.work };
         state.cycleCount = cycleCount + 1;
-        state.currentTime = workTime;
         return;
       }
 
-      state.currentTime = originTime.shift() as number;
+      if (isNthCount(cycleCount, nthRestInterval)) {
+        state.currentTime = { ...originTime.nthRest };
+        return;
+      }
+
+      state.currentTime = { ...originTime.rest };
     },
     resetTime: (state) => {
-      const {
-        originTime,
-        workTime,
-        restTime,
-        nthRestTime,
-        nthRest,
-        cycleCount,
-      } = state;
-      const isWorkMode = !!originTime.length;
+      const { currentTime } = state;
 
-      if (isWorkMode) {
-        state.currentTime = workTime;
-        return;
-      }
-
-      if (isNthCount(cycleCount, nthRest)) {
-        state.currentTime = nthRestTime;
-        return;
-      }
-
-      state.currentTime = restTime;
+      state.currentTime = { ...currentTime, current: currentTime.origin };
     },
     clearCycleCount: (state) => {
       state.cycleCount = 1;
