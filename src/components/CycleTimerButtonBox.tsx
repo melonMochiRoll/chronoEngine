@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { resetTime } from 'Features/cycleTimerSlice';
 import { useAppDispatch } from 'Hooks/reduxHooks';
 import { openModal } from 'Features/modalSlice';
-import { ModalName } from 'Components/common/RenderModal';
+import { ModalCode } from 'Components/common/RenderModal';
 
 interface CycleTimerButtonBoxProps {
   running: boolean;
@@ -22,7 +22,7 @@ const CycleTimerButtonBox: FC<CycleTimerButtonBoxProps> = ({
 
   const openModeChanger = () => {
     dispatch(openModal({
-      name: ModalName.TimerModeChanger,
+      code: ModalCode.TimerModeChanger,
     }));
   };
 
