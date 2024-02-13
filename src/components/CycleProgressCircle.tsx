@@ -1,19 +1,20 @@
 import React, { FC } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { SxProps } from '@mui/material';
+import { OriginTimeMode } from 'Features/cycleTimerSlice';
 
 interface CycleProgressCircleProps {
   progress: number;
-  isWorkTime: boolean;
+  mode: string;
 };
 
 const CycleProgressCircle: FC<CycleProgressCircleProps> = ({
   progress,
-  isWorkTime,
+  mode,
 }) => {
 
   const renderCircle = () => {
-    if (isWorkTime) {
+    if (mode === OriginTimeMode.Work) {
       return <CircularProgress
         variant='determinate'
         value={progress}

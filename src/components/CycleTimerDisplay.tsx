@@ -2,27 +2,24 @@ import React, { FC } from 'react';
 import styled from '@emotion/styled';
 import FireIcon from '@mui/icons-material/Whatshot';
 import { SxProps } from '@mui/material';
+import { OriginTimeMode } from 'Features/cycleTimerSlice';
 
 interface CycleTimerDisplayProps {
   cycleCount: number;
-  isWorkTime: boolean;
+  mode: string;
   onClick: () => void;
 };
 
 const CycleTimerDisplay: FC<CycleTimerDisplayProps> = ({
   cycleCount,
-  isWorkTime,
+  mode,
   onClick,
 }) => {
   return (
     <>
-      {
-      isWorkTime ?
-        <Mode>Work</Mode> :
-        <Mode>Rest</Mode>
-      }
+      <Mode>{mode}</Mode>
       <Cycle onClick={onClick}>
-        <FireIcon sx={FireIconStyle(isWorkTime)} />
+        <FireIcon sx={FireIconStyle(mode)} />
         <CycleCount>{cycleCount}</CycleCount>
       </Cycle>
     </>
@@ -44,9 +41,9 @@ const Cycle = styled.div`
   }
 `;
 
-const FireIconStyle = (mode: boolean): SxProps => {
+const FireIconStyle = (mode: string): SxProps => {
   return {
-    color: mode ? '#ff5f1f' : '#20caff',
+    color: mode === OriginTimeMode.Work ? '#ff5f1f' : '#20caff',
     fontSize: '72px',
   }
 };
