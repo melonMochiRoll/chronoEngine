@@ -22,7 +22,7 @@ const TimerButtonBox: FC<TimerButtonBoxProps> = ({
 
   const openModeChanger = () => {
     dispatch(openModal({
-      name: ModalCode.TimerModeChanger,
+      code: ModalCode.TimerModeChanger,
     }));
   };
 
