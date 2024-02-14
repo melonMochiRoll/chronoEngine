@@ -4,9 +4,9 @@ import TimeFormat from 'Components/TimeFormat';
 import { toHMS } from 'Utils/time';
 import { ModalCode } from 'Components/common/RenderModal';
 import { openModal } from 'Features/modalSlice';
-import CycleProgressCircle from 'Components/CycleProgressCircle';
-import CycleTimerDisplay from 'Components/CycleTimerDisplay';
-import CycleTimerButtonBox from 'Components/CycleTimerButtonBox';
+import CycleProgressCircle from 'Components/cycletimer/CycleProgressCircle';
+import CycleTimerDisplay from 'Components/cycletimer/CycleTimerDisplay';
+import CycleTimerButtonBox from 'Components/cycletimer/CycleTimerButtonBox';
 import { useAppDispatch } from 'Hooks/reduxHooks';
 import { ITimeFormat } from 'Features/cycleTimerSlice';
 
@@ -78,7 +78,7 @@ const Block = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 100vh;
+  height: 1080px;
   background-color: #121711;
 `;
 
