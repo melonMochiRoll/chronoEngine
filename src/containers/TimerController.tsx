@@ -1,8 +1,8 @@
 import React, { FC, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
-import { setTime } from 'Features/timerSlice';
+import { getProgress, setTime } from 'Features/timerSlice';
 import { openModal } from 'Features/modalSlice';
-import { ModalName } from 'Components/common/RenderModal';
+import { ModalCode } from 'Components/common/RenderModal';
 import TimerContainer from 'Containers/TimerContainer';
 
 const TimerController: FC = () => {
@@ -10,7 +10,7 @@ const TimerController: FC = () => {
   const timer = useAppSelector(state => state.timer);
   const [ timeout, setTimeout ] = useState<NodeJS.Timeout | null>(null);
   const [ running, setRunning ] = useState(false);
-  const progress = 100 - Math.floor(timer.currentTime/timer.originTime * 100);
+  const progress = getProgress(timer);
 
   const startTimer = () => {
     let currentTime = timer.currentTime;
@@ -18,13 +18,13 @@ const TimerController: FC = () => {
     const timeout = setInterval(() => {
       if (currentTime > 0) {
         dispatch(setTime({
-          time: --currentTime,
+          current: --currentTime,
         }));
       } 
       
       if (currentTime < 1) {
         dispatch(openModal({
-          name: ModalName.AlertModal,
+          code: ModalCode.AlertModal,
         }));
         setRunning(false);
         clearInterval(timeout);

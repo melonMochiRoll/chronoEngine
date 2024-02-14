@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import TimeFormat from 'Components/TimeFormat';
 import { toHMS } from 'Utils/time';
 import ProgressCircle from 'Components/ProgressCircle';
-import { ModalName } from 'Components/common/RenderModal';
+import { ModalCode } from 'Components/common/RenderModal';
 import { useAppDispatch } from 'Hooks/reduxHooks';
 import { openModal } from 'Features/modalSlice';
 import TimerButtonBox from 'Components/TimerButtonBox';
@@ -31,7 +31,7 @@ const TimerContainer: FC<TimerContainerProps> = ({
   const onOpen = () => {
     if (!running) {
       dispatch(openModal({
-        name: ModalName.TimerModal,
+        code: ModalCode.TimerModal,
       }));
     };
   };
