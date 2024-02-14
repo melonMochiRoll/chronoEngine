@@ -4,6 +4,7 @@ import CurrentTimeContainer from 'Containers/CurrentTimeContainer';
 import RenderModal from 'Components/common/RenderModal';
 import RenderTimer from 'Components/common/RenderTimer';
 import Navigator from 'Components/Navigator';
+import Footer from 'Containers/Footer';
 
 const MainPage: FC = () => {
   return (
@@ -12,6 +13,7 @@ const MainPage: FC = () => {
       <Navigator />
       <CurrentTimeContainer />
       <RenderTimer />
+      <Footer />
     </Block>
   );
 };
