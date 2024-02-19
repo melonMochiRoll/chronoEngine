@@ -6,6 +6,7 @@ import timezone from 'dayjs/plugin/timezone';
 import Clock from 'Containers/Clock';
 import Region from 'Components/Region';
 import Date from 'Components/Date';
+import backgroundImage from 'Assets/images/background.jpg';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -56,8 +57,7 @@ const Block = styled.div`
   align-items: center;
   width: 100%;
   min-height: 100vh;
-  background-image:
-    url('https://images.unsplash.com/photo-1439792675105-701e6a4ab6f0?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 1473w');
+  background-image: url(${backgroundImage});
   background-size: cover;
   background-position-y: center;
   gap: 30px;
