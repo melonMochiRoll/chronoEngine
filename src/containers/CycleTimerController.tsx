@@ -6,26 +6,46 @@ import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
 import { saveRecord } from 'Features/recordSlice';
 import dayjs from 'dayjs';
-import { toHMS } from 'Utils/time';
+import { displayHMS, toHMS } from 'Utils/time';
 
 const CycleTimerContoller: FC = () => {
   const dispatch = useAppDispatch();
   const cycleTimer = useAppSelector(state => state.cycleTimer);
-  const [ timeout, setTimeout ] = useState<NodeJS.Timeout | null>(null);
+  const [ timeoutID, setTimeoutID ] = useState<NodeJS.Timeout | null>(null);
   const [ running, setRunning ] = useState(false);
+  const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(cycleTimer);
 
   const startTimer = () => {
     let currentTime = cycleTimer.currentTime.current;
+    let experted = performance.now() + cycleTimer.currentTime.origin - cycleTimer.currentTime.current + 1000;
 
-    const timeout = setInterval(() => {
+    const timerCallback = () => {
+
+      /** running */
       if (currentTime > 0) {
+        const delay = performance.now() - experted;
+        experted += 1000;
+        --currentTime;
+
         dispatch(setTime({
-          current: --currentTime,
+          current: currentTime,
         }));
+
+        const { hour, minute, second } = toHMS(currentTime);
+        const h = hour ? `${displayHMS(hour)}:` : '';
+        const m = displayHMS(minute);
+        const s = displayHMS(second);
+
+        pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
+
+        const id = setTimeout(timerCallback, 1000 - delay);
+        setTimeoutID(id);
+        return;
       } 
       
-      if (currentTime < 1) {
+      /** end */
+      if (currentTime <= 0) {
         dispatch(openModal({
           code: ModalCode.AlertModal,
         }));
@@ -37,32 +57,30 @@ const CycleTimerContoller: FC = () => {
         }));
         dispatch(getNextTime());
         setRunning(false);
-        clearInterval(timeout);
       }
-    }, 1000);
+    };
 
-    setTimeout(timeout);
+    const id = setTimeout(timerCallback, 1000);
+    setTimeoutID(id);
   };
 
   const onSubmit = () => {
     if (!running) {
       startTimer();
     } else {
-      if (timeout) clearInterval(timeout);
+      if (timeoutID) clearTimeout(timeoutID);
     }
     
     setRunning(prev => !prev);
   };
 
   return (
-    <>
-      <CycleTimerContainer
-        currentTime={cycleTimer.currentTime}
-        cycleCount={cycleTimer.cycleCount}
-        running={running}
-        progress={progress}
-        onSubmit={onSubmit} />
-    </>
+    <CycleTimerContainer
+      currentTime={cycleTimer.currentTime}
+      cycleCount={cycleTimer.cycleCount}
+      running={running}
+      progress={progress}
+      onSubmit={onSubmit} />
   );
 };
 
