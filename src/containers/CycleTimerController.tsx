@@ -17,7 +17,7 @@ const CycleTimerContoller: FC = () => {
   const progress = getProgress(cycleTimer);
 
   useEffect(() => {
-    if (running) {
+    if (cycleTimer.currentTime.current) {
       window.addEventListener('beforeunload', beforeUnloadHandler);
     }
 
