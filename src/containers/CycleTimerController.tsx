@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import CycleTimerContainer from 'Containers/CycleTimerContainer';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getNextTime, getProgress, setTime } from 'Features/cycleTimerSlice';
@@ -15,6 +15,21 @@ const CycleTimerContoller: FC = () => {
   const [ running, setRunning ] = useState(false);
   const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(cycleTimer);
+
+  useEffect(() => {
+    if (running) {
+      window.addEventListener('beforeunload', beforeUnloadHandler);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', beforeUnloadHandler);
+    };
+  }, [running]);
+
+  const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = true;
+  };
 
   const startTimer = () => {
     let currentTime = cycleTimer.currentTime.current;
