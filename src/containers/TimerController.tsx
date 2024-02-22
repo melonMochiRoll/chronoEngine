@@ -15,7 +15,7 @@ const TimerController: FC = () => {
   const progress = getProgress(timer);
 
   useEffect(() => {
-    if (running) {
+    if (timer.currentTime) {
       window.addEventListener('beforeunload', beforeUnloadHandler);
     }
 
