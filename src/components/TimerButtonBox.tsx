@@ -40,10 +40,12 @@ const TimerButtonBox: FC<TimerButtonBoxProps> = ({
           </Button>
         }
       </Top>
-      <Button
-        onClick={() => openModeChanger()}>
-        모드 변경
-      </Button>
+      {!running &&
+        <Button
+          onClick={() => openModeChanger()}>
+          모드 변경
+        </Button>
+      }
     </Block>
   );
 };
