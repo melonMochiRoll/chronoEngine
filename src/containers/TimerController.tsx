@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getProgress, setTime } from 'Features/timerSlice';
 import { openModal } from 'Features/modalSlice';
@@ -13,6 +13,21 @@ const TimerController: FC = () => {
   const [ running, setRunning ] = useState(false);
   const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(timer);
+
+  useEffect(() => {
+    if (running) {
+      window.addEventListener('beforeunload', beforeUnloadHandler);
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', beforeUnloadHandler);
+    };
+  }, [running]);
+
+  const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = true;
+  };
 
   const startTimer = () => {
     let currentTime = timer.currentTime;
