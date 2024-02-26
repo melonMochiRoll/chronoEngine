@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getNextTime, getProgress, setTime } from 'Features/cycleTimerSlice';
 import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
-import { saveRecord } from 'Features/recordSlice';
+import { RECORD_TIME_FORMAT, saveRecord } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { displayHMS, toHMS } from 'Utils/time';
 
@@ -15,6 +15,7 @@ const CycleTimerContoller: FC = () => {
   const [ running, setRunning ] = useState(false);
   const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(cycleTimer);
+  const worker = window.Worker && new Worker(new URL('Utils/worker.ts', import.meta.url));
 
   useEffect(() => {
     if (cycleTimer.currentTime.current) {
@@ -36,6 +37,7 @@ const CycleTimerContoller: FC = () => {
     let experted = performance.now() + cycleTimer.currentTime.origin - cycleTimer.currentTime.current + 1000;
 
     const timerCallback = () => {
+      if (worker) worker.postMessage('');
 
       /** running */
       if (currentTime > 0) {
@@ -68,7 +70,7 @@ const CycleTimerContoller: FC = () => {
           cycle: cycleTimer.cycleCount,
           mode: `${cycleTimer.currentTime.mode}`,
           elapsedTime: toHMS(cycleTimer.currentTime.origin),
-          completionTime: dayjs().toDate(),
+          completionTime: dayjs().format(RECORD_TIME_FORMAT),
         }));
         dispatch(getNextTime());
         setRunning(false);
