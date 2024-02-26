@@ -14,7 +14,7 @@ export interface IRecord {
   cycle: number;
   mode: string;
   elapsedTime: IHms;
-  completionTime: Date;
+  completionTime: string;
 };
 
 const initialState: IRecord[] = [];
