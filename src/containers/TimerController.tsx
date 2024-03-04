@@ -1,18 +1,29 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getProgress, setTime } from 'Features/timerSlice';
 import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
 import TimerContainer from 'Containers/TimerContainer';
 import { displayHMS, toHMS } from 'Utils/time';
+import { TimerCode } from 'Utils/timer-worker';
 
 const TimerController: FC = () => {
   const dispatch = useAppDispatch();
   const timer = useAppSelector(state => state.timer);
-  const [ timeoutID, setTimeoutID ] = useState<NodeJS.Timeout | null>(null);
   const [ running, setRunning ] = useState(false);
   const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(timer);
+  const worker = useRef<Worker>();
+
+  useEffect(() => {
+    worker.current = window.Worker && new Worker(new URL('Utils/timer-worker.ts', import.meta.url));
+    worker.current?.addEventListener('message', workerHandler);
+
+    return () => {
+      worker.current?.terminate();
+      worker.current?.removeEventListener('message', workerHandler);
+    };
+  }, []);
 
   useEffect(() => {
     if (timer.currentTime) {
@@ -29,53 +40,41 @@ const TimerController: FC = () => {
     e.returnValue = true;
   };
 
-  const startTimer = () => {
-    let currentTime = timer.currentTime;
-    let experted = performance.now() + timer.originTime - timer.currentTime + 1000;
+  const workerHandler = ({ data: currentTime }: { data: number }) => {
 
-    const timerCallback = () => {
+    dispatch(setTime({
+      current: currentTime,
+    }));
 
-      /** running */
-      if (currentTime > 0) {
-        const delay = performance.now() - experted;
-        experted += 1000;
-        --currentTime;
+    const { hour, minute, second } = toHMS(currentTime);
+    const h = hour ? `${displayHMS(hour)}:` : '';
+    const m = displayHMS(minute);
+    const s = displayHMS(second);
 
-        dispatch(setTime({
-          current: currentTime,
-        }));
+    pageTitleElement.innerHTML = `Timer - ${h}${m}:${s}`;
 
-        const { hour, minute, second } = toHMS(currentTime);
-        const h = hour ? `${displayHMS(hour)}:` : '';
-        const m = displayHMS(minute);
-        const s = displayHMS(second);
-
-        pageTitleElement.innerHTML = `Timer - ${h}${m}:${s}`;
-
-        const id = setTimeout(timerCallback, 1000 - delay);
-        setTimeoutID(id);
-        return;
-      }
-
-      /** end */
-      if (currentTime <= 0) {
-        dispatch(openModal({
-          code: ModalCode.AlertModal,
-        }));
-        setRunning(false);
-      }
-    };
-
-    const id = setTimeout(timerCallback, 1000);
-    setTimeoutID(id);
+    /** end */
+    if (currentTime <= 0) {
+      dispatch(openModal({
+        code: ModalCode.AlertModal,
+      }));
+      setRunning(false);
+    }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!running) {
-      startTimer();
+      worker.current?.postMessage({
+        code: TimerCode.Start,
+        currentTime: timer.currentTime,
+        experted: timer.originTime - timer.currentTime + 1000,
+      });
     } else {
-      if (timeoutID) clearTimeout(timeoutID);
+      worker.current?.postMessage({
+        code: TimerCode.Pause,
+      });
     }
+
     setRunning(prev => !prev);
   };
 
