@@ -26,12 +26,6 @@ onmessage = ({ data }: { data: ITimerData }) => {
       
       id = setTimeout(timerCallback, 1000 - delay);
       postMessage(currentTime);
-      return;
-    }
-
-    /** end */
-    if (currentTime <= 0) {
-      postMessage(currentTime);
     }
   };
   
