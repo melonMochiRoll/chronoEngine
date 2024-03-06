@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import CycleTimerContainer from 'Containers/CycleTimerContainer';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getNextTime, getProgress, setTime } from 'Features/cycleTimerSlice';
@@ -7,17 +7,32 @@ import { ModalCode } from 'Components/common/RenderModal';
 import { RECORD_TIME_FORMAT, saveRecord } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { displayHMS, toHMS } from 'Utils/time';
+import { TimerCode } from 'Utils/timer-worker';
 
 const CycleTimerContoller: FC = () => {
   const dispatch = useAppDispatch();
   const cycleTimer = useAppSelector(state => state.cycleTimer);
-  const [ timeoutID, setTimeoutID ] = useState<NodeJS.Timeout | null>(null);
   const [ running, setRunning ] = useState(false);
   const pageTitleElement = document.getElementsByTagName('title')[0];
   const progress = getProgress(cycleTimer);
-  const worker = window.Worker && new Worker(new URL('Utils/worker.ts', import.meta.url));
+  const worker = useRef<Worker>();
 
   useEffect(() => {
+    worker.current = window.Worker && new Worker(new URL('Utils/timer-worker.ts', import.meta.url));
+    worker.current?.addEventListener('message', workerHandler);
+
+    return () => {
+      worker.current?.terminate();
+      worker.current?.removeEventListener('message', workerHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = true;
+    };
+
     if (cycleTimer.currentTime.current) {
       window.addEventListener('beforeunload', beforeUnloadHandler);
     }
@@ -27,65 +42,47 @@ const CycleTimerContoller: FC = () => {
     };
   }, [running]);
 
-  const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-    e.returnValue = true;
-  };
+  useEffect(() => {
+    if (running && cycleTimer.currentTime.current <= 0) {
+      dispatch(openModal({
+        code: ModalCode.AlertModal,
+      }));
+      dispatch(saveRecord({
+        cycle: cycleTimer.cycleCount,
+        mode: `${cycleTimer.currentTime.mode}`,
+        elapsedTime: toHMS(cycleTimer.currentTime.origin),
+        completionTime: dayjs().format(RECORD_TIME_FORMAT),
+      }));
+      dispatch(getNextTime());
+      setRunning(false);
+    }
+  }, [cycleTimer]);
 
-  const startTimer = () => {
-    let currentTime = cycleTimer.currentTime.current;
-    let experted = performance.now() + cycleTimer.currentTime.origin - cycleTimer.currentTime.current + 1000;
+  const workerHandler = ({ data: currentTime }: { data: number }) => {
+    
+    dispatch(setTime({
+      current: currentTime,
+    }));
 
-    const timerCallback = () => {
-      if (worker) worker.postMessage('');
+    const { hour, minute, second } = toHMS(currentTime);
+    const h = hour ? `${displayHMS(hour)}:` : '';
+    const m = displayHMS(minute);
+    const s = displayHMS(second);
 
-      /** running */
-      if (currentTime > 0) {
-        const delay = performance.now() - experted;
-        experted += 1000;
-        --currentTime;
-
-        dispatch(setTime({
-          current: currentTime,
-        }));
-
-        const { hour, minute, second } = toHMS(currentTime);
-        const h = hour ? `${displayHMS(hour)}:` : '';
-        const m = displayHMS(minute);
-        const s = displayHMS(second);
-
-        pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
-
-        const id = setTimeout(timerCallback, 1000 - delay);
-        setTimeoutID(id);
-        return;
-      } 
-      
-      /** end */
-      if (currentTime <= 0) {
-        dispatch(openModal({
-          code: ModalCode.AlertModal,
-        }));
-        dispatch(saveRecord({
-          cycle: cycleTimer.cycleCount,
-          mode: `${cycleTimer.currentTime.mode}`,
-          elapsedTime: toHMS(cycleTimer.currentTime.origin),
-          completionTime: dayjs().format(RECORD_TIME_FORMAT),
-        }));
-        dispatch(getNextTime());
-        setRunning(false);
-      }
-    };
-
-    const id = setTimeout(timerCallback, 1000);
-    setTimeoutID(id);
+    pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
   };
 
   const onSubmit = () => {
     if (!running) {
-      startTimer();
+      worker.current?.postMessage({
+        code: TimerCode.Start,
+        currentTime: cycleTimer.currentTime.current,
+        experted: cycleTimer.currentTime.origin - cycleTimer.currentTime.current + 1000,
+      });
     } else {
-      if (timeoutID) clearTimeout(timeoutID);
+      worker.current?.postMessage({
+        code: TimerCode.Pause,
+      });
     }
     
     setRunning(prev => !prev);
