@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -26,9 +26,11 @@ const CurrentTimeContainer: FC = () => {
   ] = now.split('-');
   const city = dayjs.tz.guess();
 
-  setInterval(() => {
-    setNow(dayjs().format(format));
-  }, 1000);
+  useEffect(() => {
+    setInterval(() => {
+      setNow(dayjs().format(format));
+    }, 1000);
+  }, []);
 
   return (
     <Block>
