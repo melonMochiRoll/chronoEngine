@@ -26,6 +26,11 @@ const TimerController: FC = () => {
   }, []);
 
   useEffect(() => {
+    const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = true;
+    };
+
     if (timer.currentTime) {
       window.addEventListener('beforeunload', beforeUnloadHandler);
     }
@@ -35,10 +40,14 @@ const TimerController: FC = () => {
     };
   }, [running]);
 
-  const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
-    e.preventDefault();
-    e.returnValue = true;
-  };
+  useEffect(() => {
+    if (running && timer.currentTime <= 0) {
+      dispatch(openModal({
+        code: ModalCode.AlertModal,
+      }));
+      setRunning(false);
+    }
+  }, []);
 
   const workerHandler = ({ data: currentTime }: { data: number }) => {
 
@@ -52,14 +61,6 @@ const TimerController: FC = () => {
     const s = displayHMS(second);
 
     pageTitleElement.innerHTML = `Timer - ${h}${m}:${s}`;
-
-    /** end */
-    if (currentTime <= 0) {
-      dispatch(openModal({
-        code: ModalCode.AlertModal,
-      }));
-      setRunning(false);
-    }
   };
 
   const onSubmit = async () => {
