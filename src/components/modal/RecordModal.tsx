@@ -163,6 +163,7 @@ const Scroll = styled.div`
   flex-direction: column;
   padding: 10px 0;
   height: 400px;
+  overflow: auto;
 `;
 
 const ButtonBox = styled.div`
