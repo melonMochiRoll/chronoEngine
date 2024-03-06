@@ -32,9 +32,14 @@ const CycleTimerModal: FC = () => {
   const [ nthRestInterval, onChangeNthRestInterval ] = useInput(0);
   
   const onSubmit = () => {
+    const workTimeDefault = 1500;
+    const restTimeDefault = 300;
+    const workTimeSum = Number(workTime.hour) * 3600 + Number(workTime.minute) * 60 + Number(workTime.second)
+    const restTimeSum = Number(restTime.hour) * 3600 + Number(restTime.minute) * 60 + Number(restTime.second)
+
     dispatch(initCycle({
-      workTime: Number(workTime.hour) * 3600 + Number(workTime.minute) * 60 + Number(workTime.second),
-      restTime: Number(restTime.hour) * 3600 + Number(restTime.minute) * 60 + Number(restTime.second),
+      workTime: workTimeSum <= 0 ? workTimeDefault : workTimeSum,
+      restTime: restTimeSum <= 0 ? restTimeDefault : restTimeSum,
       nthRestTime: Number(nthRestTime.hour) * 3600 + Number(nthRestTime.minute) * 60 + Number(nthRestTime.second),
       nthRestInterval: nthRestInterval,
     }));
