@@ -1,4 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { getItem } from "Utils/localStorage";
+import { CYCLE_SAVE_DATA } from "./recordSlice";
 
 export const isNthCount = (number: number, n: number) => {
   if (!n) {
@@ -49,16 +51,19 @@ export interface ICycleTimerInitState {
   cycleCount: number;
 };
 
-const initialState: ICycleTimerInitState = {
-  originTime: {
-    work: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
-    rest: { mode: OriginTimeMode.Rest, origin: 0, current: 0 },
-    nthRest: { mode: OriginTimeMode.NthRest, origin: 0, current: 0 },
-  },
-  currentTime: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
-  nthRestInterval: 0,
-  cycleCount: 1,
-};
+const savedata = getItem(CYCLE_SAVE_DATA);
+
+const initialState: ICycleTimerInitState = savedata ||
+  {
+    originTime: {
+      work: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
+      rest: { mode: OriginTimeMode.Rest, origin: 0, current: 0 },
+      nthRest: { mode: OriginTimeMode.NthRest, origin: 0, current: 0 },
+    },
+    currentTime: { mode: OriginTimeMode.Work, origin: 0, current: 0 },
+    nthRestInterval: 0,
+    cycleCount: 1,
+  };
 
 type TInitCyclePayload = {
   workTime: number,
