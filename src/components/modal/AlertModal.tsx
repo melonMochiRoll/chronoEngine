@@ -8,6 +8,8 @@ const AlertModal: FC = () => {
   const alert = new Audio('https://i.cloudup.com/nCtoNq3kJN.m4a');
 
   useEffect(() => {
+    alert.play();
+
     const to = setInterval(() => {
       alert.play();
     }, 1000);
