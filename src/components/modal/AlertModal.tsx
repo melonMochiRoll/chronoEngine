@@ -2,10 +2,11 @@ import React, { FC, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { closeModal } from 'Features/modalSlice';
 import { useAppDispatch } from 'Hooks/reduxHooks';
+import alert01 from 'Assets/audios/Alert01.m4a';
 
 const AlertModal: FC = () => {
   const dispatch = useAppDispatch();
-  const alert = new Audio('https://i.cloudup.com/nCtoNq3kJN.m4a');
+  const alert = new Audio(alert01);
 
   useEffect(() => {
     alert.play();
