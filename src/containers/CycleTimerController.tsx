@@ -18,6 +18,20 @@ const CycleTimerContoller: FC = () => {
   const worker = useRef<Worker>();
 
   useEffect(() => {
+    const workerHandler = ({ data: currentTime }: { data: number }) => {
+    
+      dispatch(setTime({
+        current: currentTime,
+      }));
+  
+      const { hour, minute, second } = toHMS(currentTime);
+      const h = hour ? `${displayHMS(hour)}:` : '';
+      const m = displayHMS(minute);
+      const s = displayHMS(second);
+  
+      pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
+    };
+    
     worker.current = window.Worker && new Worker(new URL('Utils/timer-worker.ts', import.meta.url));
     worker.current?.addEventListener('message', workerHandler);
 
@@ -57,20 +71,6 @@ const CycleTimerContoller: FC = () => {
       setRunning(false);
     }
   }, [cycleTimer]);
-
-  const workerHandler = ({ data: currentTime }: { data: number }) => {
-    
-    dispatch(setTime({
-      current: currentTime,
-    }));
-
-    const { hour, minute, second } = toHMS(currentTime);
-    const h = hour ? `${displayHMS(hour)}:` : '';
-    const m = displayHMS(minute);
-    const s = displayHMS(second);
-
-    pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
-  };
 
   const onSubmit = () => {
     if (!running) {
