@@ -47,7 +47,7 @@ const TimerController: FC = () => {
       }));
       setRunning(false);
     }
-  }, []);
+  }, [timer]);
 
   const workerHandler = ({ data: currentTime }: { data: number }) => {
 
