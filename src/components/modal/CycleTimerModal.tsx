@@ -10,7 +10,8 @@ import useInput from 'Hooks/useInput';
 
 const CycleTimerModal: FC = () => {
   const dispatch = useAppDispatch();
-  const { originTime } = useAppSelector(state => state.cycleTimer);
+  const cycleTimer = useAppSelector(state => state.cycleTimer);
+  const { originTime } = cycleTimer;
   const [ workTime, onChangeWorkTime ] = useTimer(originTime.work.origin ?
     toHMS(originTime.work.origin) : {
     hour: '',
@@ -29,7 +30,7 @@ const CycleTimerModal: FC = () => {
     minute: '',
     second: '',
   });
-  const [ nthRestInterval, onChangeNthRestInterval ] = useInput(0);
+  const [ nthRestInterval, onChangeNthRestInterval ] = useInput(cycleTimer.nthRestInterval);
   
   const onSubmit = () => {
     const workTimeDefault = 1500;
