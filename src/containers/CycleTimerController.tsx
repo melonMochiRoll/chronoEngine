@@ -4,10 +4,11 @@ import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { getNextTime, getProgress, setTime } from 'Features/cycleTimerSlice';
 import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
-import { RECORD_TIME_FORMAT, saveRecord } from 'Features/recordSlice';
+import { CYCLE_SAVE_DATA, RECORD_TIME_FORMAT, saveRecord } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { displayHMS, toHMS } from 'Utils/time';
 import { TimerCode } from 'Utils/timer-worker';
+import { setItem } from 'Utils/localStorage';
 
 const CycleTimerContoller: FC = () => {
   const dispatch = useAppDispatch();
@@ -70,6 +71,10 @@ const CycleTimerContoller: FC = () => {
       dispatch(getNextTime());
       setRunning(false);
     }
+  }, [cycleTimer]);
+
+  useEffect(() => {
+    setItem(CYCLE_SAVE_DATA, cycleTimer);
   }, [cycleTimer]);
 
   const onSubmit = () => {
