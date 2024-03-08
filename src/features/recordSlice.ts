@@ -1,6 +1,7 @@
 import { Dispatch, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getRecords, setRecord } from "Utils/localStorage";
 
+export const CYCLE_SAVE_DATA = 'CE_cycle_save_data';
 export const RECORD_STARTSWITH = 'CE_record_';
 export const RECORD_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
