@@ -7,7 +7,7 @@ import { ModalCode } from 'Components/common/RenderModal';
 import { CYCLE_SAVE_DATA, RECORD_TIME_FORMAT, saveRecord } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { displayHMS, toHMS } from 'Utils/time';
-import { TimerCode } from 'Utils/timer-worker';
+import { IWorkerToTimerData, TimerCode } from 'Utils/timer-worker';
 import { setItem } from 'Utils/localStorage';
 
 const CycleTimerContoller: FC = () => {
@@ -19,18 +19,18 @@ const CycleTimerContoller: FC = () => {
   const worker = useRef<Worker>();
 
   useEffect(() => {
-    const workerHandler = ({ data: currentTime }: { data: number }) => {
+    const workerHandler = ({ data }: { data: IWorkerToTimerData }) => {
     
       dispatch(setTime({
-        current: currentTime,
+        current: data.time,
       }));
   
-      const { hour, minute, second } = toHMS(currentTime);
+      const { hour, minute, second } = toHMS(data.time);
       const h = hour ? `${displayHMS(hour)}:` : '';
       const m = displayHMS(minute);
       const s = displayHMS(second);
   
-      pageTitleElement.innerHTML = `${cycleTimer.currentTime.mode} - ${h}${m}:${s}`;
+      pageTitleElement.innerHTML = `${data.mode} - ${h}${m}:${s}`;
     };
     
     worker.current = window.Worker && new Worker(new URL('Utils/timer-worker.ts', import.meta.url));
@@ -82,6 +82,7 @@ const CycleTimerContoller: FC = () => {
       worker.current?.postMessage({
         code: TimerCode.Start,
         currentTime: cycleTimer.currentTime.current,
+        currentMode: cycleTimer.currentTime.mode,
         experted: cycleTimer.currentTime.origin - cycleTimer.currentTime.current + 1000,
       });
     } else {

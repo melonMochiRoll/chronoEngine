@@ -1,4 +1,9 @@
 
+export interface IWorkerToTimerData {
+  time: number;
+  mode: string;
+};
+
 export const enum TimerCode {
   Start,
   Pause,
@@ -7,6 +12,7 @@ export const enum TimerCode {
 interface ITimerData {
   code: TimerCode;
   currentTime: number;
+  currentMode: string;
   experted: number;
 };
 
@@ -14,6 +20,7 @@ let id: NodeJS.Timeout;
 
 onmessage = ({ data }: { data: ITimerData }) => {
   let currentTime = data.currentTime;
+  const currentMode = data.currentMode;
   let experted = performance.now() + data.experted;
 
   const timerCallback = () => {
@@ -25,7 +32,7 @@ onmessage = ({ data }: { data: ITimerData }) => {
       --currentTime;
       
       id = setTimeout(timerCallback, 1000 - delay);
-      postMessage(currentTime);
+      postMessage({ time: currentTime, mode: currentMode });
     }
   };
   
@@ -34,6 +41,6 @@ onmessage = ({ data }: { data: ITimerData }) => {
   }
 
   if (data.code === TimerCode.Pause) {
-    clearTimeout(id);
+    if (id) clearTimeout(id);
   }
 };
