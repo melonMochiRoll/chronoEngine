@@ -5,7 +5,7 @@ import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
 import TimerContainer from 'Containers/TimerContainer';
 import { displayHMS, toHMS } from 'Utils/time';
-import { TimerCode } from 'Utils/timer-worker';
+import { IWorkerToTimerData, TimerCode } from 'Utils/timer-worker';
 
 const TimerController: FC = () => {
   const dispatch = useAppDispatch();
@@ -49,13 +49,13 @@ const TimerController: FC = () => {
     }
   }, [timer]);
 
-  const workerHandler = ({ data: currentTime }: { data: number }) => {
+  const workerHandler = ({ data }: { data: IWorkerToTimerData }) => {
 
     dispatch(setTime({
-      current: currentTime,
+      current: data.time,
     }));
 
-    const { hour, minute, second } = toHMS(currentTime);
+    const { hour, minute, second } = toHMS(data.time);
     const h = hour ? `${displayHMS(hour)}:` : '';
     const m = displayHMS(minute);
     const s = displayHMS(second);
