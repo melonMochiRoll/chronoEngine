@@ -37,7 +37,7 @@ export const getRecords = () => {
       .filter((it: string) => it.startsWith(RECORD_STARTSWITH))
       .map((key: string) => getItem(key))
       .sort((a: IRecord, b: IRecord) =>
-        new Date(a.completionTime).valueOf() - new Date(b.completionTime).valueOf()
+        new Date(b.completionTime).valueOf() - new Date(a.completionTime).valueOf()
       );
 
   return records;
