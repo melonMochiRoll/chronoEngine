@@ -1,21 +1,33 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { closeModal } from 'Features/modalSlice';
 import { useAppDispatch } from 'Hooks/reduxHooks';
+import { AlertCode } from 'Utils/alert-worker';
 import alert01 from 'Assets/audios/Alert01.m4a';
 
 const AlertModal: FC = () => {
   const dispatch = useAppDispatch();
   const alert = new Audio(alert01);
-
+  const worker = useRef<Worker>();
+  
   useEffect(() => {
-    alert.play();
-
-    const to = setInterval(() => {
+    const workerHandler = () => {
       alert.play();
-    }, 1000);
+    };
 
-    return () => clearInterval(to);
+    worker.current = window.Worker && new Worker(new URL('Utils/alert-worker.ts', import.meta.url));
+    worker.current?.addEventListener('message', workerHandler);
+    worker.current?.postMessage({
+      code: AlertCode.Start,
+    });
+
+    return () => {
+      worker.current?.terminate();
+      worker.current?.removeEventListener('message', workerHandler);
+      worker.current?.postMessage({
+        code: AlertCode.Pause,
+      });
+    };
   }, []);
 
   return (
