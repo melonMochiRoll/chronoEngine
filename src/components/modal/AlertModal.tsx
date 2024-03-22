@@ -17,17 +17,17 @@ const AlertModal: FC = () => {
 
     worker.current = window.Worker && new Worker(new URL('Utils/alert-worker.ts', import.meta.url));
     worker.current?.addEventListener('message', workerHandler);
-    worker.current?.postMessage({
-      code: AlertCode.Start,
-    });
 
     return () => {
       worker.current?.terminate();
       worker.current?.removeEventListener('message', workerHandler);
-      worker.current?.postMessage({
-        code: AlertCode.Pause,
-      });
     };
+  }, [alert]);
+
+  useEffect(() => {
+    worker.current?.postMessage({
+      code: AlertCode.Start,
+    });
   }, []);
 
   return (
