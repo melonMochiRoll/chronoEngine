@@ -1,10 +1,10 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { closeModal } from 'Features/modalSlice';
-import { IRecord, RECORD_TIME_FORMAT, clearState } from 'Features/recordSlice';
+import { IRecord, RECORD_TIME_FORMAT, clearState, loadRecords } from 'Features/recordSlice';
 import dayjs from 'dayjs';
-import { clearStorage } from 'Utils/localStorage';
+import { clearStorage, getRecords } from 'Utils/localStorage';
 import { clearCycleCount } from 'Features/cycleTimerSlice';
 
 interface IProcessedRecord {
@@ -14,28 +14,51 @@ interface IProcessedRecord {
   completionTime: string;
 };
 
-const getDisplayFormat = (records: IRecord[]) => 
-  records.map((item: IRecord) => {
-    const hour = item.elapsedTime.hour ? `${item.elapsedTime.hour}시` : '';
-    const minute = item.elapsedTime.minute ? `${item.elapsedTime.minute}분` : '';
-    const second = item.elapsedTime.second ? `${item.elapsedTime.second}초` : '';
+const isRecord = (value: IRecord[] | any) => {
+  return (value[0] as IRecord).elapsedTime !== undefined;
+};
 
-    return {
-      cycle: item.cycle,
-      mode: item.mode,
-      elapsedTime: `${hour} ${minute} ${second}`,
-      completionTime: dayjs(item.completionTime).format(RECORD_TIME_FORMAT),
-    };
-  });
+const getDisplayFormat = (records: IRecord[]) => {
+  if (isRecord(records)) {
+    return records.map((item: IRecord) => {
+      const hour = item.elapsedTime.hour ? `${item.elapsedTime.hour}시` : '';
+      const minute = item.elapsedTime.minute ? `${item.elapsedTime.minute}분` : '';
+      const second = item.elapsedTime.second ? `${item.elapsedTime.second}초` : '';
+  
+      return {
+        cycle: item.cycle,
+        mode: item.mode,
+        elapsedTime: `${hour} ${minute} ${second}`,
+        completionTime: dayjs(item.completionTime).format(RECORD_TIME_FORMAT),
+      };
+    })
+  }
+
+  return [];
+};
 
 const RecordModal: FC = () => {
   const dispatch = useAppDispatch();
-  const { records } = useAppSelector(state => state.record);
+  const { records, lastCursor } = useAppSelector(state => state.record);
   const [ mappedRecord, setMappedRecord ] = useState(getDisplayFormat(records));
+  const [ canLoadMore, setCanLoadMore ] = useState(records.length > 9);
+  const currentLastcursor = useRef(lastCursor);
 
   useEffect(() => {
     setMappedRecord(getDisplayFormat(records));
   }, [records]);
+  
+  const loadMore = (cursor: number) => {
+    const { records: newRecords, lastCursor } = getRecords(cursor - 1);
+    const result = [ ...records, ...newRecords ];
+
+    if (newRecords.length < 10) {
+      setCanLoadMore(false);
+    }
+
+    currentLastcursor.current = lastCursor;
+    setMappedRecord(getDisplayFormat(result));
+  };
 
   const clearRecord = () => {
     dispatch(clearState());
@@ -61,15 +84,20 @@ const RecordModal: FC = () => {
         </Head>
         <Scroll>
           {mappedRecord.map((item: IProcessedRecord, idx: number) => 
-            (
-              <Row key={idx}>
-                <span>{item.cycle}</span>
-                <span>{item.mode}</span>
-                <span>{item.elapsedTime}</span>
-                <span>{item.completionTime}</span>
-              </Row>
-            )
+            {
+              return item ? 
+                <Row key={idx}>
+                  <span>{item.cycle}</span>
+                  <span>{item.mode}</span>
+                  <span>{item.elapsedTime}</span>
+                  <span>{item.completionTime}</span>
+                </Row> : '';
+            }
           )}
+          {canLoadMore &&
+          <LoadMore>
+            <button onClick={() => loadMore(currentLastcursor.current)}>Load More</button>
+          </LoadMore>}
         </Scroll>
       </RecordsBox>
       <ButtonBox>
@@ -164,6 +192,28 @@ const Scroll = styled.div`
   padding: 10px 0;
   height: 400px;
   overflow: auto;
+`;
+
+const LoadMore = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+
+  button {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 600;
+    padding: 7px 25px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid #fff;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &:hover {
+      color: #000;
+      background-color: #fff;
+    }
+  }
 `;
 
 const ButtonBox = styled.div`

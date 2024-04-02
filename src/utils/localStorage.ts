@@ -8,6 +8,10 @@ const isJSON = (str: string) => {
   }
 };
 
+export const getLength = () => {
+  return Object.keys(localStorage).length;
+};
+
 export const getItem = (key: string) => {
   try {
     if (localStorage.hasOwnProperty(key)) {
@@ -46,20 +50,21 @@ export const clearStorage = () => {
   localStorage.clear();
 };
 
-export const getRecords = () => {
-  const lastId = Number(getItem(RECORD_LAST_ID));
+export const getRecords = (cursor: number) => {
   const result: IRecord[] = [];
+  let lastCursor = 0;
 
-  for (let i=lastId; i>0; i--) {
+  for (let i=cursor; i>0; i--) {
     if (result.length > 9) {
       break;
     }
 
+    lastCursor = i;
     const item = getItem(`${RECORD_STARTSWITH}${i}`);
     result.push(item);
   }
 
-  return result;
+  return { records: result, lastCursor };
 };
 
 export const setRecord = (value: IRecord) => {

@@ -1,5 +1,5 @@
 import { Dispatch, PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getRecords, setRecord } from "Utils/localStorage";
+import { getItem, getLength, getRecords, setRecord } from "Utils/localStorage";
 
 export const CYCLE_SAVE_DATA = 'CE_cycle_save_data';
 export const RECORD_STARTSWITH = 'CE_record_';
@@ -25,6 +25,7 @@ export const recordSlice = createSlice({
   name: 'record',
   initialState: {
     records: initialState,
+    lastCursor: 0,
   },
   reducers: {
     saveRecord: (state, actions: PayloadAction<IRecord>) => {
@@ -32,8 +33,10 @@ export const recordSlice = createSlice({
       setRecord(record);
       state.records = [ ...state.records, record ];
     },
-    loadRecords: (state, actions: PayloadAction<IRecord[]>) => {
-      state.records = actions.payload;
+    loadRecords: (state, actions: PayloadAction<any>) => {
+      const { records, lastCursor } = actions.payload;
+      state.records = records;
+      state.lastCursor = lastCursor;
     },
     clearState: (state) => {
       state.records = [];
@@ -49,6 +52,7 @@ export const {
 export default recordSlice.reducer;
 
 export const fetchRecords = (dispatch: Dispatch) => {
-  const records = getRecords();
-  dispatch(loadRecords(records));
+  const lastId = Number(getItem(RECORD_LAST_ID)) || getLength();
+  const { records, lastCursor } = getRecords(lastId);
+  dispatch(loadRecords({ records, lastCursor }));
 };
