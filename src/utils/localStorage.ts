@@ -1,29 +1,45 @@
-import { IRecord, RECORD_STARTSWITH } from "Features/recordSlice";
-import { nanoid } from "nanoid";
+import { IRecord, RECORD_LAST_ID, RECORD_STARTSWITH } from "Features/recordSlice";
 
 const isJSON = (str: string) => {
   try {
     return JSON.parse(str);
-  } catch (e: any) {
+  } catch (err) {
     return false;
   }
 };
 
 export const getItem = (key: string) => {
-  if (localStorage.hasOwnProperty(key)) {
-    const value = localStorage.getItem(key) as string;
-    return isJSON(value) || value;
+  try {
+    if (localStorage.hasOwnProperty(key)) {
+      const value = localStorage.getItem(key) as string;
+      return isJSON(value) || value;
+    }
+
+    return '';
+  } catch (err) {
+    console.error(err);
+    return '';
   }
-  
-  return '';
 };
 
 export const setItem = (key: string, value: any) => {
-  const item = value instanceof Object ?
+  try {
+    const item = value instanceof Object ?
     JSON.stringify(value) :
     value;
 
-  localStorage.setItem(key, item);
+    localStorage.setItem(key, item);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const removeItem = (key: string) => {
+  try {
+    localStorage.removeItem(key);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const clearStorage = () => {
@@ -31,19 +47,32 @@ export const clearStorage = () => {
 };
 
 export const getRecords = () => {
-  const records =
-    Object
-      .keys(localStorage)
-      .filter((it: string) => it.startsWith(RECORD_STARTSWITH))
-      .map((key: string) => getItem(key))
-      .sort((a: IRecord, b: IRecord) =>
-        new Date(b.completionTime).valueOf() - new Date(a.completionTime).valueOf()
-      );
+  const lastId = Number(getItem(RECORD_LAST_ID));
+  const result: IRecord[] = [];
 
-  return records;
+  for (let i=lastId; i>0; i--) {
+    if (result.length > 9) {
+      break;
+    }
+
+    const item = getItem(`${RECORD_STARTSWITH}${i}`);
+    result.push(item);
+  }
+
+  return result;
 };
 
 export const setRecord = (value: IRecord) => {
-  const recordKey = `${RECORD_STARTSWITH}${nanoid(7)}`;
-  setItem(recordKey, value);
+  const lastId = Number(getItem(RECORD_LAST_ID)) || 0;
+  const currentId = lastId + 1;
+  const recordKey = `${RECORD_STARTSWITH}${currentId}`;
+
+  try {
+    setItem(recordKey, value);
+    setItem(RECORD_LAST_ID, currentId);
+  } catch (err) {
+    removeItem(recordKey);
+    setItem(RECORD_LAST_ID, lastId);
+    console.error(err);
+  }
 };
