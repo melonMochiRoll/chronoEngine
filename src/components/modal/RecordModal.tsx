@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { closeModal } from 'Features/modalSlice';
-import { IRecord, RECORD_TIME_FORMAT, clearState, loadRecords } from 'Features/recordSlice';
+import { IRecord, RECORD_TIME_FORMAT, clearState } from 'Features/recordSlice';
 import dayjs from 'dayjs';
 import { clearStorage, getRecords } from 'Utils/localStorage';
 import { clearCycleCount } from 'Features/cycleTimerSlice';
@@ -15,7 +15,7 @@ interface IProcessedRecord {
 };
 
 const isRecord = (value: IRecord[] | any) => {
-  return (value[0] as IRecord).elapsedTime !== undefined;
+  return (value[0] as IRecord)?.elapsedTime !== undefined;
 };
 
 const getDisplayFormat = (records: IRecord[]) => {
