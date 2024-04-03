@@ -31,7 +31,11 @@ export const recordSlice = createSlice({
     saveRecord: (state, actions: PayloadAction<IRecord>) => {
       const record = actions.payload;
       setRecord(record);
-      state.records = [ ...state.records, record ];
+      const rest = state.records;
+      rest.pop();
+
+      state.records = [ record, ...rest ];
+      state.lastCursor = state.lastCursor + 1;
     },
     loadRecords: (state, actions: PayloadAction<any>) => {
       const { records, lastCursor } = actions.payload;
@@ -40,6 +44,7 @@ export const recordSlice = createSlice({
     },
     clearState: (state) => {
       state.records = [];
+      state.lastCursor = 0;
     },
   },
 });
