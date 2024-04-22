@@ -5,9 +5,10 @@ import { useAppDispatch } from 'Hooks/reduxHooks';
 import { AlertCode } from 'Utils/alert-worker';
 import alert01 from 'Assets/audios/Alert01.m4a';
 
+const alert = new Audio(alert01);
+
 const AlertModal: FC = () => {
   const dispatch = useAppDispatch();
-  const alert = new Audio(alert01);
   const worker = useRef<Worker>();
   
   useEffect(() => {
