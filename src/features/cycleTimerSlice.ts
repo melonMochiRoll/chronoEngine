@@ -93,6 +93,7 @@ export const cycleTimerSlice = createSlice({
       state.originTime = newOriginTime;
       state.currentTime = { ...newOriginTime.work };
       state.nthRestInterval = nthRestInterval;
+      state.cycleCount = 1;
     },
     setTime: (state, action: PayloadAction<{ current: number }>) => {
       state.currentTime = {
