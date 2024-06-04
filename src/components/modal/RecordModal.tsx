@@ -76,29 +76,29 @@ const RecordModal: FC = () => {
   return (
     <Block>
       <RecordsBox>
-        <Head>
+        <Header>
           <span>Cycle</span>
           <span>Mode</span>
           <span>Elapsed Time</span>
           <span>Completion time</span>
-        </Head>
-        <Scroll>
+        </Header>
+        <Main>
           {mappedRecord.map((item: IProcessedRecord, idx: number) => 
             {
               return item ? 
-                <Row key={idx}>
+                <React.Fragment key={idx}>
                   <span>{item.cycle}</span>
                   <span>{item.mode}</span>
                   <span>{item.elapsedTime}</span>
                   <span>{item.completionTime}</span>
-                </Row> : '';
+                </React.Fragment> : <></>;
             }
           )}
-          {canLoadMore &&
-          <LoadMore>
-            <button onClick={() => loadMore(currentLastcursor.current)}>Load More</button>
-          </LoadMore>}
-        </Scroll>
+        {canLoadMore &&
+        <LoadMore>
+          <button onClick={() => loadMore(currentLastcursor.current)}>Load More</button>
+        </LoadMore>}
+        </Main>
       </RecordsBox>
       <ButtonBox>
         <Button
@@ -131,79 +131,53 @@ const Block = styled.div`
 const RecordsBox = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 800px;
   color: #fff;
 `;
 
-const Head = styled.div`
-  display: flex;
-  align-items: center;
+const Header = styled.header`
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr 1fr 1fr;
+  width: 100%;
   font-size: 24px;
   font-weight: 600;
   text-align: center;
-  border-bottom: 1px solid #fff;
   padding-bottom: 10px;
-
-  span:nth-of-type(1) {
-    min-width: 130px;
-  }
-
-  span:nth-of-type(2) {
-    min-width: 130px;
-  }
-
-  span:nth-of-type(3) {
-    min-width: 200px;
-  }
-
-  span:nth-of-type(4) {
-    min-width: 200px;
-  }
+  border-bottom: 1px solid #fff;
 `;
 
-const Row = styled.div`
-  display: flex;
+const Main = styled.main`
+  display: grid;
+  grid-template-columns: 0.5fr 0.5fr 1fr 1fr;
+  grid-auto-rows: minmax(40px, auto);
+  justify-content: center;
   align-items: center;
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: center;
-
-  span:nth-of-type(1) {
-    min-width: 130px;
-  }
-
-  span:nth-of-type(2) {
-    min-width: 130px;
-  }
-
-  span:nth-of-type(3) {
-    min-width: 210px;
-  }
-
-  span:nth-of-type(4) {
-    min-width: 200px;
-  }
-`;
-
-const Scroll = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
+  width: 100%;
   height: 400px;
+  padding: 10px 0;
   overflow: auto;
+
+  span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 600;
+  }
 `;
 
 const LoadMore = styled.div`
+  grid-column: 1/5;
   display: flex;
   justify-content: center;
-  padding: 10px 0;
 
   button {
     color: #fff;
     font-size: 22px;
     font-weight: 600;
     padding: 7px 25px;
+    margin-top: 50px;
     background-color: rgba(0, 0, 0, 0);
     border: 1px solid #fff;
     border-radius: 10px;
