@@ -28,14 +28,14 @@ const useTimer = (initData: HMS): useTimerReturnType => {
     if (e.target.name === 'minute') {
       setValue({
         ...value,
-        minute: e.target.value,
+        minute: e.target.value > 59 ? 59 : e.target.value,
       });
     }
 
     if (e.target.name === 'second') {
       setValue({
         ...value,
-        second: e.target.value,
+        second: e.target.value > 59 ? 59 : e.target.value,
       });
     }
 
