@@ -17,19 +17,3 @@ export const toHMS = (second: number) => {
     second,
   };
 };
-
-/**
- * 
- * @param number
- * @returns returns digital clock format
- */
-export const displayHMS = (number: string | number) => {
-  if (typeof number === 'string' && number.length > 2) return number;
-  if (typeof number === 'number' && number > 99) return number;
-
-  if (typeof number === 'number') {
-    number = `${number}`;
-  }
-
-  return number.length === 1 ? `0${number}` : number;
-};
