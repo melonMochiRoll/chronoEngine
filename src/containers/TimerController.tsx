@@ -4,7 +4,7 @@ import { getProgress, setTime } from 'Features/timerSlice';
 import { openModal } from 'Features/modalSlice';
 import { ModalCode } from 'Components/common/RenderModal';
 import TimerContainer from 'Containers/TimerContainer';
-import { displayHMS, toHMS } from 'Utils/time';
+import { toHMS } from 'Utils/time';
 import { IWorkerToTimerData, TimerCode } from 'Utils/timer-worker';
 
 const TimerController: FC = () => {
@@ -56,11 +56,11 @@ const TimerController: FC = () => {
     }));
 
     const { hour, minute, second } = toHMS(data.time);
-    const h = hour ? `${displayHMS(hour)}:` : '';
-    const m = displayHMS(minute);
-    const s = displayHMS(second);
+    const h = String(hour).padStart(2, '0');
+    const m = String(minute).padStart(2, '0');
+    const s = String(second).padStart(2, '0');
 
-    pageTitleElement.innerHTML = `Timer - ${h}${m}:${s}`;
+    pageTitleElement.innerHTML = `Timer - ${h}:${m}:${s}`;
   };
 
   const onSubmit = async () => {
