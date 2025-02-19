@@ -77,7 +77,7 @@ export const clearExpiredItem = () => {
   for (const [key, value] of Object.entries(localStorage)) {
     const target: TLocalStorageItem = JSON.parse(value);
 
-    if (dayjs().isBefore(target.expirationDate, 'day')) {
+    if (dayjs().isAfter(target.expirationDate, 'day')) {
       removeItem(key);
     }
   }
