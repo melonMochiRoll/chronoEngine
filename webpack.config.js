@@ -20,6 +20,7 @@ module.exports = {
       Pages: path.resolve(__dirname, 'src/pages/'),
       Routes: path.resolve(__dirname, 'src/routes/'),
       Styles: path.resolve(__dirname, 'src/styles/'),
+      Typings: path.resolve(__dirname, 'src/typings/'),
       Utils: path.resolve(__dirname, 'src/utils/'),
     },
   },
