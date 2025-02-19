@@ -6,10 +6,12 @@ import MainRouter from 'Routes/MainRouter';
 import { GlobalStyle } from 'Styles/GlobalStyle';
 import reduxStore from './store';
 import { fetchRecords } from 'Features/recordSlice';
+import { clearExpiredItem } from 'Utils/localStorage';
 
 const rootNode = document.getElementById('root') as HTMLElement;
 
 reduxStore.dispatch(fetchRecords);
+clearExpiredItem();
 
 createRoot(rootNode).render(
   <React.StrictMode>
