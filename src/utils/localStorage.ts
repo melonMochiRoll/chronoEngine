@@ -1,4 +1,12 @@
+import dayjs from "dayjs";
 import { IRecord, RECORD_LAST_ID, RECORD_STARTSWITH } from "Features/recordSlice";
+import { TLocalStorageExpirationDate, TLocalStorageItem } from "Typings/type";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);;
+dayjs.tz.setDefault(dayjs.tz.guess());
 
 const isJSON = (str: string) => {
   try {
@@ -14,25 +22,27 @@ export const getLength = () => {
 
 export const getItem = (key: string) => {
   try {
-    if (localStorage.hasOwnProperty(key)) {
-      const value = localStorage.getItem(key) as string;
-      return isJSON(value) || value;
+    if (!localStorage.hasOwnProperty(key)) {
+      return '';
     }
 
-    return '';
+    const item: TLocalStorageItem = JSON.parse(localStorage.getItem(key) as string);
+
+    return item.item;
   } catch (err) {
     console.error(err);
     return '';
   }
 };
 
-export const setItem = (key: string, value: any) => {
+export const setItem = (key: string, value?: any, expirationPeriod?: TLocalStorageExpirationDate) => {
   try {
-    const item = value instanceof Object ?
-    JSON.stringify(value) :
-    value;
+    const result = JSON.stringify({
+      item: value,
+      expirationDate: dayjs.tz().add(expirationPeriod || 28, 'day').format('YYYY-MM-DD'),
+    });
 
-    localStorage.setItem(key, item);
+    localStorage.setItem(key, result);
   } catch (err) {
     console.error(err);
   }
@@ -79,5 +89,15 @@ export const setRecord = (value: IRecord) => {
     removeItem(recordKey);
     setItem(RECORD_LAST_ID, lastId);
     console.error(err);
+  }
+};
+
+export const clearExpiredItem = () => {
+  for (const [key, value] of Object.entries(localStorage)) {
+    const target: TLocalStorageItem = JSON.parse(value);
+
+    if (dayjs().isBefore(target.expirationDate, 'day')) {
+      removeItem(key);
+    }
   }
 };
