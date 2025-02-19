@@ -21,39 +21,26 @@ export const getLength = () => {
 };
 
 export const getItem = (key: string) => {
-  try {
-    if (!localStorage.hasOwnProperty(key)) {
-      return '';
-    }
-
-    const item: TLocalStorageItem = JSON.parse(localStorage.getItem(key) as string);
-
-    return item.item;
-  } catch (err) {
-    console.error(err);
+  if (!localStorage.hasOwnProperty(key)) {
     return '';
   }
+
+  const item: TLocalStorageItem = JSON.parse(localStorage.getItem(key) as string);
+
+  return item.item;
 };
 
 export const setItem = (key: string, value?: any, expirationPeriod?: TLocalStorageExpirationDate) => {
-  try {
-    const result = JSON.stringify({
-      item: value,
-      expirationDate: dayjs.tz().add(expirationPeriod || 28, 'day').format('YYYY-MM-DD'),
-    });
+  const result = JSON.stringify({
+    item: value,
+    expirationDate: dayjs.tz().add(expirationPeriod || 28, 'day').format('YYYY-MM-DD'),
+  });
 
-    localStorage.setItem(key, result);
-  } catch (err) {
-    console.error(err);
-  }
+  localStorage.setItem(key, result);
 };
 
 const removeItem = (key: string) => {
-  try {
-    localStorage.removeItem(key);
-  } catch (err) {
-    console.error(err);
-  }
+  localStorage.removeItem(key);
 };
 
 export const clearStorage = () => {
@@ -82,14 +69,8 @@ export const setRecord = (value: IRecord) => {
   const currentId = lastId + 1;
   const recordKey = `${RECORD_STARTSWITH}${currentId}`;
 
-  try {
-    setItem(recordKey, value);
-    setItem(RECORD_LAST_ID, currentId);
-  } catch (err) {
-    removeItem(recordKey);
-    setItem(RECORD_LAST_ID, lastId);
-    console.error(err);
-  }
+  setItem(recordKey, value);
+  setItem(RECORD_LAST_ID, currentId);
 };
 
 export const clearExpiredItem = () => {
