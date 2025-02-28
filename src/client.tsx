@@ -10,8 +10,8 @@ import { clearExpiredItem } from 'Utils/localStorage';
 
 const rootNode = document.getElementById('root') as HTMLElement;
 
-reduxStore.dispatch(fetchRecords);
 clearExpiredItem();
+reduxStore.dispatch(fetchRecords);
 
 createRoot(rootNode).render(
   <React.StrictMode>
