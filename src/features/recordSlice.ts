@@ -30,10 +30,9 @@ export const recordSlice = createSlice({
   reducers: {
     saveRecord: (state, actions: PayloadAction<IRecord>) => {
       const record = actions.payload;
-      setRecord(record);
       const rest = state.records;
-      rest.pop();
-
+      setRecord(record);
+      
       state.records = [ record, ...rest ];
       state.lastCursor = state.lastCursor + 1;
     },
@@ -58,6 +57,5 @@ export default recordSlice.reducer;
 
 export const fetchRecords = (dispatch: Dispatch) => {
   const lastId = Number(getItem(RECORD_LAST_ID)) || getLength();
-  const { records, lastCursor } = getRecords(lastId);
-  dispatch(loadRecords({ records, lastCursor }));
+  dispatch(loadRecords(getRecords(lastId)));
 };
