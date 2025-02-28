@@ -43,10 +43,6 @@ const RecordModal: FC = () => {
   const [ mappedRecord, setMappedRecord ] = useState(getDisplayFormat(records));
   const [ canLoadMore, setCanLoadMore ] = useState(records.length > 9);
   const currentLastcursor = useRef(lastCursor);
-
-  useEffect(() => {
-    setMappedRecord(getDisplayFormat(records));
-  }, [records]);
   
   const loadMore = (cursor: number) => {
     const { records: newRecords, lastCursor } = getRecords(cursor - 1);
@@ -83,21 +79,20 @@ const RecordModal: FC = () => {
           <span>Completion time</span>
         </Header>
         <Main>
-          {mappedRecord.map((item: IProcessedRecord, idx: number) => 
-            {
-              return item ? 
-                <React.Fragment key={idx}>
-                  <span>{item.cycle}</span>
-                  <span>{item.mode}</span>
-                  <span>{item.elapsedTime}</span>
-                  <span>{item.completionTime}</span>
-                </React.Fragment> : <></>;
-            }
-          )}
+          {mappedRecord.map((item: IProcessedRecord, idx: number) => {
+            return (
+              <React.Fragment key={idx}>
+                <Item>{item.cycle}</Item>
+                <Item>{item.mode}</Item>
+                <Item>{item.elapsedTime}</Item>
+                <Item>{item.completionTime}</Item>
+              </React.Fragment>
+            );
+          })}
         {canLoadMore &&
-        <LoadMore>
-          <button onClick={() => loadMore(currentLastcursor.current)}>Load More</button>
-        </LoadMore>}
+          <LoadMore>
+            <button onClick={() => loadMore(currentLastcursor.current)}>Load More</button>
+          </LoadMore>}
         </Main>
       </RecordsBox>
       <ButtonBox>
@@ -138,7 +133,7 @@ const RecordsBox = styled.div`
 
 const Header = styled.header`
   display: grid;
-  grid-template-columns: 0.5fr 0.5fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 2fr 2fr;
   width: 100%;
   font-size: 24px;
   font-weight: 600;
@@ -149,22 +144,19 @@ const Header = styled.header`
 
 const Main = styled.main`
   display: grid;
-  grid-template-columns: 0.5fr 0.5fr 1fr 1fr;
-  grid-auto-rows: minmax(40px, auto);
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  grid-template-columns: 1fr 1fr 2fr 2fr;
+  align-content: start;
+  width: 800px;
   height: 400px;
   padding: 10px 0;
   overflow: auto;
+`;
 
-  span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    font-weight: 600;
-  }
+const Item = styled.div`
+  justify-self: center;
+  height: 40px;
+  font-size: 24px;
+  font-weight: 600;
 `;
 
 const LoadMore = styled.div`
