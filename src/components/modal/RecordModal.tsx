@@ -57,6 +57,7 @@ const RecordModal: FC = () => {
   };
 
   const clearRecord = () => {
+    setMappedRecord([]);
     dispatch(clearState());
     clearStorage();
   };
