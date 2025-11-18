@@ -36,7 +36,7 @@ export const recordSlice = createSlice({
       state.records = [ record, ...rest ];
       state.lastCursor = state.lastCursor + 1;
     },
-    loadRecords: (state, actions: PayloadAction<any>) => {
+    loadRecords: (state, actions: PayloadAction<{ records: IRecord[], lastCursor: number }>) => {
       const { records, lastCursor } = actions.payload;
       state.records = records;
       state.lastCursor = lastCursor;
