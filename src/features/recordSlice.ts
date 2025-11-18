@@ -1,5 +1,5 @@
 import { Dispatch, PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getItem, getLength, getRecords, setRecord } from "Utils/localStorage";
+import { getItem, getRecordsLength, getRecords, setRecord } from "Utils/localStorage";
 
 export const CYCLE_SAVE_DATA = 'CE_cycle_save_data';
 export const RECORD_STARTSWITH = 'CE_record_';
@@ -56,6 +56,6 @@ export const {
 export default recordSlice.reducer;
 
 export const fetchRecords = (dispatch: Dispatch) => {
-  const lastId = Number(getItem(RECORD_LAST_ID)) || getLength();
+  const lastId = Number(getItem(RECORD_LAST_ID)) || getRecordsLength();
   dispatch(loadRecords(getRecords(lastId)));
 };

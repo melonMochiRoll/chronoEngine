@@ -16,8 +16,11 @@ const isJSON = (str: string) => {
   }
 };
 
-export const getLength = () => {
-  return Object.keys(localStorage).length;
+export const getRecordsLength = () => {
+  return Object
+    .keys(localStorage)
+    .filter(key => key.startsWith(RECORD_STARTSWITH))
+    .length;
 };
 
 export const getItem = (key: string) => {
