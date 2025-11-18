@@ -50,6 +50,14 @@ export const clearStorage = () => {
   localStorage.clear();
 };
 
+export const clearRecords = () => {
+  Object
+    .keys(localStorage)
+    .filter(key => key.startsWith(RECORD_STARTSWITH))
+    .forEach(key => removeItem(key));
+  removeItem(RECORD_LAST_ID);
+};
+
 export const getRecords = (cursor: number) => {
   const result: IRecord[] = [];
   let lastCursor = 0;
