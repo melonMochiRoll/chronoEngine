@@ -1,65 +1,34 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useAppDispatch, useAppSelector } from 'Hooks/reduxHooks';
 import { closeModal } from 'Features/modalSlice';
-import { IRecord, RECORD_TIME_FORMAT, clearState } from 'Features/recordSlice';
-import dayjs from 'dayjs';
-import { clearStorage, getRecords } from 'Utils/localStorage';
+import { clearState } from 'Features/recordSlice';
+import { clearRecords, getRecords } from 'Utils/localStorage';
 import { clearCycleCount } from 'Features/cycleTimerSlice';
-
-interface IProcessedRecord {
-  cycle: number;
-  mode: string;
-  elapsedTime: string;
-  completionTime: string;
-};
-
-const isRecord = (value: IRecord[] | any) => {
-  return (value[0] as IRecord)?.elapsedTime !== undefined;
-};
-
-const getDisplayFormat = (records: IRecord[]) => {
-  if (isRecord(records)) {
-    return records.map((item: IRecord) => {
-      const hour = item.elapsedTime.hour ? `${item.elapsedTime.hour}시` : '';
-      const minute = item.elapsedTime.minute ? `${item.elapsedTime.minute}분` : '';
-      const second = item.elapsedTime.second ? `${item.elapsedTime.second}초` : '';
-  
-      return {
-        cycle: item.cycle,
-        mode: item.mode,
-        elapsedTime: `${hour} ${minute} ${second}`,
-        completionTime: dayjs(item.completionTime).format(RECORD_TIME_FORMAT),
-      };
-    })
-  }
-
-  return [];
-};
 
 const RecordModal: FC = () => {
   const dispatch = useAppDispatch();
   const { records, lastCursor } = useAppSelector(state => state.record);
-  const [ mappedRecord, setMappedRecord ] = useState(getDisplayFormat(records));
+  const [ renderRecords, setRenderRecords ] = useState(records);
   const [ canLoadMore, setCanLoadMore ] = useState(records.length > 9);
   const currentLastcursor = useRef(lastCursor);
   
   const loadMore = (cursor: number) => {
     const { records: newRecords, lastCursor } = getRecords(cursor - 1);
-    const result = [ ...records, ...newRecords ];
+    const result = [ ...renderRecords, ...newRecords ];
 
     if (newRecords.length < 10) {
       setCanLoadMore(false);
     }
 
     currentLastcursor.current = lastCursor;
-    setMappedRecord(getDisplayFormat(result));
+    setRenderRecords(result);
   };
 
   const clearRecord = () => {
-    setMappedRecord([]);
     dispatch(clearState());
-    clearStorage();
+    clearRecords();
+    setRenderRecords([]);
   };
 
   const clearCycle = () => {
@@ -80,12 +49,16 @@ const RecordModal: FC = () => {
           <span>Completion time</span>
         </Header>
         <Main>
-          {mappedRecord.map((item: IProcessedRecord, idx: number) => {
+          {renderRecords.map((item, idx) => {
+            const hour = item.elapsedTime?.hour ? `${item.elapsedTime.hour}시` : '';
+            const minute = item.elapsedTime?.minute ? `${item.elapsedTime.minute}분` : '';
+            const second = item.elapsedTime?.second ? `${item.elapsedTime.second}초` : '';
+
             return (
               <React.Fragment key={idx}>
                 <Item>{item.cycle}</Item>
                 <Item>{item.mode}</Item>
-                <Item>{item.elapsedTime}</Item>
+                <Item>{`${hour} ${minute} ${second}`}</Item>
                 <Item>{item.completionTime}</Item>
               </React.Fragment>
             );
